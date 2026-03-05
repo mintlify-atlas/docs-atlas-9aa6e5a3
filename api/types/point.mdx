@@ -1,0 +1,62 @@
+---
+title: "Point"
+description: "Type definition for 2D coordinate points"
+---
+
+## Overview
+
+The `Point` type represents a two-dimensional coordinate in the canvas space. It is used throughout the application for tracking mouse positions, annotation coordinates, and canvas transformations.
+
+## Type Definition
+
+```typescript types.ts
+export type Point = {
+  x: number
+  y: number
+}
+```
+
+## Properties
+
+<ParamField path="x" type="number" required>
+  The horizontal coordinate (distance from the left edge)
+</ParamField>
+
+<ParamField path="y" type="number" required>
+  The vertical coordinate (distance from the top edge)
+</ParamField>
+
+## Usage
+
+The `Point` type is used in various contexts throughout the application:
+
+### Canvas Interaction
+
+```typescript
+// Tracking mouse position during drawing
+const [drawStart, setDrawStart] = useState<Point | null>(null)
+const [drawCurrent, setDrawCurrent] = useState<Point | null>(null)
+```
+
+### Pan and Zoom
+
+```typescript
+// Canvas panning state
+const [pan, setPan] = useState<Point>({ x: 0, y: 0 })
+```
+
+### Annotation Transformations
+
+The `Point` type is also used within the `AnnotationTransform` type to track the starting pointer position during move and resize operations.
+
+## Coordinate System
+
+- Origin (0, 0) is at the top-left corner
+- X increases to the right
+- Y increases downward
+- Coordinates are in image space (pixels relative to the natural image dimensions)
+
+## Related Types
+
+- [AnnotationBox](/api/types/annotation-box) - Uses x, y coordinates for positioning
+- [AnnotationTransform](/api/types/annotation-transform) - Uses Point for tracking pointer positions

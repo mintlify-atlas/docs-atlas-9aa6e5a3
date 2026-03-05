@@ -1,0 +1,113 @@
+---
+title: "LabelColor"
+description: "Type definition for label color schemes"
+---
+
+## Overview
+
+The `LabelColor` type defines a color scheme for rendering annotation labels. Each color scheme includes multiple variants for different visual contexts, ensuring consistent styling across the UI.
+
+## Type Definition
+
+```typescript types.ts
+export type LabelColor = {
+  solid: string
+  soft: string
+  overlay: string
+  overlayStrong: string
+}
+```
+
+## Properties
+
+<ParamField path="solid" type="string" required>
+  The solid color used for borders, badges, and text labels. Typically an HSL color with high saturation.
+  
+  Example: `"hsl(210 70% 40%)"`
+</ParamField>
+
+<ParamField path="soft" type="string" required>
+  A very light background color for tags or badges. Has low saturation and high lightness.
+  
+  Example: `"hsl(210 95% 96%)"`
+</ParamField>
+
+<ParamField path="overlay" type="string" required>
+  A semi-transparent overlay color for annotation boxes (default state). Uses alpha transparency around 14%.
+  
+  Example: `"hsl(210 85% 45% / 0.14)"`
+</ParamField>
+
+<ParamField path="overlayStrong" type="string" required>
+  A slightly more opaque overlay for selected or hovered annotation boxes. Uses alpha transparency around 24%.
+  
+  Example: `"hsl(210 85% 45% / 0.24)"`
+</ParamField>
+
+## Usage
+
+### Generating Random Colors
+
+The `buildRandomLabelColor` utility generates a random color scheme:
+
+```typescript
+import { buildRandomLabelColor } from '@/features/labelwise/utils/color'
+
+const labelColors: Record<string, LabelColor> = {}
+
+for (const label of labels) {
+  labelColors[label] = buildRandomLabelColor()
+}
+```
+
+### Applying Colors in the UI
+
+Colors are applied to annotation boxes and labels:
+
+```typescript App.tsx
+<button
+  className="absolute border-2"
+  style={{
+    borderColor: labelColors[annotation.label]?.solid ?? "#111827",
+    backgroundColor: selectedAnnotationIds.includes(annotation.id)
+      ? labelColors[annotation.label]?.overlayStrong ?? "transparent"
+      : labelColors[annotation.label]?.overlay ?? "transparent",
+  }}
+>
+  <div
+    className="absolute -top-7 left-0 rounded px-2 py-1 text-xs text-white"
+    style={{ backgroundColor: labelColors[annotation.label]?.solid }}
+  >
+    {annotation.label}
+  </div>
+</button>
+```
+
+## Color Generation
+
+The `buildRandomLabelColor` utility generates colors using HSL:
+
+```typescript color.ts
+export const buildRandomLabelColor = (): LabelColor => {
+  const hue = Math.floor(Math.random() * 360)
+  return {
+    solid: `hsl(${hue} 70% 40%)`,
+    soft: `hsl(${hue} 95% 96%)`,
+    overlay: `hsl(${hue} 85% 45% / 0.14)`,
+    overlayStrong: `hsl(${hue} 85% 45% / 0.24)`,
+  }
+}
+```
+
+## Color Variants Summary
+
+| Variant | Saturation | Lightness | Opacity | Use Case |
+|---------|------------|-----------|---------|----------|
+| `solid` | 70% | 40% | 100% | Borders, badges, text |
+| `soft` | 95% | 96% | 100% | Light backgrounds |
+| `overlay` | 85% | 45% | 14% | Default box fill |
+| `overlayStrong` | 85% | 45% | 24% | Selected box fill |
+
+## Related Utilities
+
+- [buildRandomLabelColor](/api/utilities/color-generator) - Generates a random LabelColor scheme

@@ -1,0 +1,127 @@
+---
+title: "AnnotationTransform"
+description: "Type definition for active annotation transformations"
+---
+
+## Overview
+
+The `AnnotationTransform` type represents an active transformation operation (move or resize) on an annotation. It captures the state needed to compute the new position or dimensions as the user drags the mouse.
+
+## Type Definition
+
+```typescript types.ts
+export type AnnotationTransform = {
+  id: string
+  type: "move" | "resize"
+  handle?: ResizeHandle
+  startPointer: Point
+  startBox: AnnotationBox
+}
+```
+
+## Properties
+
+<ParamField path="id" type="string" required>
+  The unique identifier of the annotation being transformed
+</ParamField>
+
+<ParamField path="type" type="'move' | 'resize'" required>
+  The type of transformation being performed:
+  - `"move"` - Dragging the annotation to a new position
+  - `"resize"` - Resizing the annotation by dragging a corner handle
+</ParamField>
+
+<ParamField path="handle" type="ResizeHandle" optional>
+  The resize handle being dragged (only used when `type` is `"resize"`). Can be `"nw"`, `"ne"`, `"sw"`, or `"se"`.
+</ParamField>
+
+<ParamField path="startPointer" type="Point" required>
+  The initial pointer coordinates when the transformation began (in image space)
+</ParamField>
+
+<ParamField path="startBox" type="AnnotationBox" required>
+  A snapshot of the annotation's state before the transformation began. Used to calculate the new position/size based on the pointer delta.
+</ParamField>
+
+## Usage
+
+### Starting a Move Operation
+
+```typescript App.tsx
+const startMoveAnnotation = (
+  event: MouseEvent<HTMLElement>,
+  annotation: AnnotationBox
+) => {
+  const point = getStagePointFromClient(event.clientX, event.clientY)
+  if (!point) return
+
+  setAnnotationTransform({
+    id: annotation.id,
+    type: "move",
+    startPointer: point,
+    startBox: annotation,
+  })
+}
+```
+
+### Starting a Resize Operation
+
+```typescript App.tsx
+const startResizeAnnotation = (
+  event: MouseEvent<HTMLElement>,
+  annotation: AnnotationBox,
+  handle: ResizeHandle
+) => {
+  const point = getStagePointFromClient(event.clientX, event.clientY)
+  if (!point) return
+
+  setAnnotationTransform({
+    id: annotation.id,
+    type: "resize",
+    handle,
+    startPointer: point,
+    startBox: annotation,
+  })
+}
+```
+
+### Computing Transformations
+
+The transform state is used in a `mousemove` event handler to compute the new annotation state:
+
+```typescript
+// Calculate pointer delta
+const dx = currentPointer.x - annotationTransform.startPointer.x
+const dy = currentPointer.y - annotationTransform.startPointer.y
+
+if (annotationTransform.type === "move") {
+  // Apply delta to position, respecting boundaries
+  const nextX = Math.max(0, Math.min(
+    imageWidth - width,
+    annotationTransform.startBox.x + dx
+  ))
+  const nextY = Math.max(0, Math.min(
+    imageHeight - height,
+    annotationTransform.startBox.y + dy
+  ))
+}
+```
+
+## State Management
+
+The active transformation is stored in React state:
+
+```typescript
+const [annotationTransform, setAnnotationTransform] = 
+  useState<AnnotationTransform | null>(null)
+```
+
+- Set to `null` when no transformation is active
+- Set to an `AnnotationTransform` object when dragging
+- Cleared on `mouseup` or when the transformation completes
+
+## Related Types
+
+- [AnnotationBox](/api/types/annotation-box) - The annotation being transformed
+- [Point](/api/types/point) - Used for pointer coordinates
+- [ResizeHandle](/api/types/resize-handle) - Specifies which corner is being dragged

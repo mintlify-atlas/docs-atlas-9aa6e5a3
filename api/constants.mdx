@@ -1,0 +1,105 @@
+---
+title: "Constants"
+description: "Configuration constants used throughout labelWise"
+---
+
+## Overview
+
+This page documents the constant values used for configuration and constraints in labelWise. These constants control annotation behavior, grid display, and default settings.
+
+## Annotation Constants
+
+### MIN_BOX_SIZE
+
+```typescript constants.ts
+export const MIN_BOX_SIZE = 8
+```
+
+The minimum width and height (in pixels) for a bounding box annotation. This prevents users from creating annotations that are too small to be useful or visible.
+
+**Usage:**
+- Enforced during drawing (boxes smaller than this are discarded)
+- Enforced during resizing (boxes cannot be resized below this dimension)
+- Referenced in CSV validation
+
+**Type:** `number`
+
+**Value:** `8` pixels
+
+### GRID_SIZE
+
+```typescript constants.ts
+export const GRID_SIZE = 32
+```
+
+The spacing (in pixels) for the grid guide overlay on the canvas. The grid helps users align annotations precisely.
+
+**Usage:**
+- Controls the background grid pattern size in draw mode
+- Displayed when the "Guía" (Grid Guide) toggle is enabled
+
+**Type:** `number`
+
+**Value:** `32` pixels
+
+### GRID_SIZE
+
+```typescript constants.ts
+export const GRID_SIZE = 32
+```
+
+The spacing (in pixels) for the grid guide overlay on the canvas. The grid helps users align annotations precisely.
+
+**Usage:**
+- Controls the background grid pattern size in draw mode
+- Displayed when the "Guía" (Grid Guide) toggle is enabled
+
+**Type:** `number`
+
+**Value:** `32` pixels
+
+### DEFAULT_LABELS
+
+```typescript constants.ts
+export const DEFAULT_LABELS: string[] = []
+```
+
+The default set of labels when the application starts. Currently empty, requiring users to create their own labels.
+
+**Type:** `string[]`
+
+**Value:** `[]` (empty array)
+
+## UI Style Constants
+
+### SELECT_BASE_CLASS
+
+```typescript constants.ts
+export const SELECT_BASE_CLASS =
+  "h-9 rounded-lg border border-input bg-background px-3 pr-8 text-sm text-foreground shadow-xs outline-none appearance-none transition-colors focus:border-primary focus:ring-2 focus:ring-ring/35"
+```
+
+Tailwind CSS classes for standard select dropdowns in the application.
+
+**Usage:**
+- Applied to label selection dropdowns
+- Provides consistent styling across the UI
+
+### SELECT_COMPACT_CLASS
+
+```typescript constants.ts
+export const SELECT_COMPACT_CLASS =
+  "h-8 rounded-md border border-input bg-background px-2 pr-7 text-xs text-foreground shadow-xs outline-none appearance-none transition-colors focus:border-primary focus:ring-2 focus:ring-ring/35"
+```
+
+Tailwind CSS classes for compact select dropdowns (used in the CSV table view).
+
+**Usage:**
+- Applied to label selection in the CSV table editor
+- Provides a smaller, space-efficient styling
+
+## Related Documentation
+
+- [Annotations](/features/annotations) - How MIN_BOX_SIZE affects annotation creation
+- [Canvas Controls](/features/canvas-controls) - How GRID_SIZE affects the grid overlay
+- [CSV Format](/guides/csv-format) - How constants are used in validation

@@ -67,7 +67,11 @@
             "pages": [
               "api/types/annotation-box",
               "api/types/image-item",
-              "api/types/csv-row"
+              "api/types/csv-row",
+              "api/types/point",
+              "api/types/resize-handle",
+              "api/types/annotation-transform",
+              "api/types/label-color"
             ]
           },
           {
@@ -75,6 +79,12 @@
             "pages": [
               "api/utilities/csv-parser",
               "api/utilities/color-generator"
+            ]
+          },
+          {
+            "group": "Constants",
+            "pages": [
+              "api/constants"
             ]
           }
         ]

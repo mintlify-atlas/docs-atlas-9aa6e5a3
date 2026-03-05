@@ -1,0 +1,87 @@
+---
+title: "ResizeHandle"
+description: "Type definition for annotation resize handles"
+---
+
+## Overview
+
+The `ResizeHandle` type represents the four corner handles used for resizing bounding box annotations. Each handle corresponds to a corner of the rectangle and determines the resize behavior.
+
+## Type Definition
+
+```typescript types.ts
+export type ResizeHandle = "nw" | "ne" | "sw" | "se"
+```
+
+## Values
+
+<ParamField path="nw" type="string">
+  **North-West** (top-left corner) - Adjusts both top and left edges
+</ParamField>
+
+<ParamField path="ne" type="string">
+  **North-East** (top-right corner) - Adjusts top and right edges
+</ParamField>
+
+<ParamField path="sw" type="string">
+  **South-West** (bottom-left corner) - Adjusts bottom and left edges
+</ParamField>
+
+<ParamField path="se" type="string">
+  **South-East** (bottom-right corner) - Adjusts both bottom and right edges
+</ParamField>
+
+## Usage
+
+The `ResizeHandle` type is used when initiating a resize operation on an annotation:
+
+```typescript App.tsx
+const startResizeAnnotation = (
+  event: MouseEvent<HTMLElement>,
+  annotation: AnnotationBox,
+  handle: ResizeHandle
+) => {
+  // ... setup resize operation
+  setAnnotationTransform({
+    id: annotation.id,
+    type: "resize",
+    handle,
+    startPointer: point,
+    startBox: annotation,
+  })
+}
+```
+
+## Resize Behavior
+
+Each handle modifies different edges of the bounding box:
+
+| Handle | Modifies Edges | Cursor Style |
+|--------|----------------|--------------|
+| `nw`   | Top + Left     | `nwse-resize` |
+| `ne`   | Top + Right    | `nesw-resize` |
+| `sw`   | Bottom + Left  | `nesw-resize` |
+| `se`   | Bottom + Right | `nwse-resize` |
+
+## Constraints
+
+When resizing, the following constraints are enforced:
+
+- Minimum box size (`MIN_BOX_SIZE = 8px`)
+- Canvas boundaries (cannot resize beyond image edges)
+- Opposite corners remain fixed (only the selected corner moves)
+
+## Visual Representation
+
+```
+  nw ----------- ne
+  |               |
+  |   Annotation  |
+  |               |
+  sw ----------- se
+```
+
+## Related Types
+
+- [AnnotationTransform](/api/types/annotation-transform) - Uses ResizeHandle to track which corner is being dragged
+- [AnnotationBox](/api/types/annotation-box) - The target of resize operations
