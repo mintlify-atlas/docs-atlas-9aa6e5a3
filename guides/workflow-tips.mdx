@@ -1,0 +1,244 @@
+---
+title: Workflow Tips
+description: Best practices and efficiency tips for annotating images with labelWise
+---
+
+## Getting Started Right
+
+### Organize Before You Annotate
+
+<Tip>
+Before loading images into labelWise, organize them in folders by similarity (same scene, same object types, similar lighting). This helps you work in batches and reuse annotations.
+</Tip>
+
+Preparation steps:
+1. Group similar images together
+2. Ensure consistent naming conventions
+3. Remove any corrupted or duplicate images
+4. Verify all images are in supported formats (JPEG, PNG, WebP, etc.)
+
+## Efficient Annotation Techniques
+
+### Use Copy and Paste for Similar Objects
+
+The most powerful workflow optimization in labelWise is the copy/paste feature:
+
+<Tip>
+**Template workflow**: Create a perfect annotation once, then copy and paste it across similar images. Adjust the position and size as needed.
+</Tip>
+
+**Example workflow**:
+1. Annotate a car in the first image with precise boundaries
+2. Press `Ctrl/Cmd + C` to copy
+3. Navigate to the next image with a similar car
+4. Press `Ctrl/Cmd + V` to paste
+5. Drag to reposition and resize if needed
+6. Repeat for all similar images
+
+### Multi-Select for Batch Operations
+
+<Tip>
+Use `Ctrl/Cmd + Click` to select multiple annotations at once. This is perfect for:
+- Copying multiple objects together
+- Reviewing multiple annotations before moving on
+- Deleting multiple incorrect annotations
+</Tip>
+
+**Batch workflow**:
+1. Annotate all objects on an image
+2. Hold `Ctrl/Cmd` and click each annotation to select them all
+3. Copy all annotations with `Ctrl/Cmd + C`
+4. Go to a similar image
+5. Paste all annotations at once
+6. Adjust individual positions as needed
+
+### Use Grid Guides for Alignment
+
+<Tip>
+Enable the grid guide (click the **Guía** button) to help align annotations consistently. This is especially useful for:
+- Architectural images with straight lines
+- Product photos requiring precise positioning
+- Creating annotations of consistent size
+</Tip>
+
+The grid is displayed at 50px intervals (configurable via `GRID_SIZE` constant) and helps maintain visual consistency across annotations.
+
+## Label Management
+
+### Bulk Label Creation
+
+<Tip>
+Use the bulk label textarea to create multiple labels at once. Enter labels separated by commas or line breaks:
+```
+car, truck, bus, motorcycle
+person, bicycle
+traffic light, stop sign
+```
+Click **Agregar lote** to create all labels in one operation.
+</Tip>
+
+### Label Naming Conventions
+
+**Best practices for label names**:
+- Use lowercase (labelWise automatically converts to lowercase)
+- Keep names short but descriptive (`car` not `automobile_vehicle`)
+- Use underscores for multi-word labels (`traffic_light` not `traffic light`)
+- Be consistent across your dataset
+- Avoid special characters and emojis
+
+### Pre-Define Your Label Set
+
+<Tip>
+Create all your labels before you start annotating. This prevents:
+- Typos and inconsistent naming
+- Having to switch between drawing and label creation
+- Accidentally creating duplicate labels with different names
+</Tip>
+
+## Canvas Navigation
+
+### Zoom and Pan Effectively
+
+**For detailed work**:
+1. Switch to **Pan** mode (click **Mover** button)
+2. Use the **+** button to zoom in up to 300%
+3. Drag the canvas to navigate
+4. Switch back to **Draw** mode to create annotations
+5. Use **Reset** to return to 100% zoom
+
+<Tip>
+**Pro tip**: Zoom in when working on small objects or fine details. The minimum box size is 10×10 pixels, so zooming helps with precision.
+</Tip>
+
+### Two-View Workflow
+
+Toggle between **Canvas** and **CSV** views to leverage different perspectives:
+
+- **Canvas view**: Visual annotation, drawing, positioning
+- **CSV view**: Precise numeric adjustments, bulk review, label changes
+
+<Tip>
+Use CSV view to:
+- Quickly change labels without clicking through the canvas
+- Enter exact pixel coordinates for perfect alignment
+- Review all annotations across all images in one table
+- Multi-select rows with `Ctrl/Cmd + Click`
+</Tip>
+
+## Export Habits
+
+### Save Early, Save Often
+
+<Tip>
+**Critical**: Export your CSV frequently. labelWise runs entirely in your browser with no server-side storage. If you close the tab or refresh the page, **all annotations are lost**.
+</Tip>
+
+**Recommended export schedule**:
+- After completing each batch of 10-20 images
+- Before taking a break
+- Before closing the browser
+- After any significant annotation session
+
+### Incremental Exports
+
+Exported CSV files are named `annotations-YYYY-MM-DD.csv`. To avoid overwriting:
+1. Rename downloaded files immediately (add batch number, timestamp, etc.)
+2. Keep a backup folder with dated exports
+3. Merge CSVs in Excel or Python if working in multiple sessions
+
+## Annotation Quality Tips
+
+### Consistent Bounding Box Strategy
+
+Decide on a consistent strategy for all annotations:
+
+**Tight boxes**: Touch the object edges with minimal background
+- Pros: More precise, better for segmentation models
+- Cons: Time-consuming, harder on complex shapes
+
+**Loose boxes**: Include some background margin
+- Pros: Faster annotation, more forgiving
+- Cons: Less precise, may include irrelevant context
+
+<Tip>
+**Choose one strategy and stick to it** across your entire dataset. Inconsistent bounding box styles can confuse ML models during training.
+</Tip>
+
+### Handle Occlusions
+
+For partially visible objects:
+- Annotate the visible portion only (don't guess the hidden part)
+- Use consistent label names for partial views if relevant to your model
+- Consider creating separate labels like `person_partial` if occlusion is important
+
+### Edge Cases
+
+**Objects cut off by image boundary**:
+- Annotate the visible portion
+- Extend box to image edge (coordinates are clamped automatically)
+
+**Overlapping objects**:
+- Annotate all objects, even if boxes overlap
+- Z-order doesn't matter in CSV export
+- Use multi-select to manage overlapping annotations
+
+## Performance Tips
+
+### Image Loading
+
+<Tip>
+For large datasets:
+- Load images in batches of 50-100 at a time
+- Remove completed images before loading the next batch
+- Use consistent image sizes to maintain predictable performance
+</Tip>
+
+### Browser Considerations
+
+- Use Chrome or Edge for best performance
+- Close unused tabs to free memory
+- Disable unnecessary browser extensions
+- For very large images (>4K resolution), consider resizing before annotation
+
+## Collaborative Workflows
+
+### Splitting Work Across Team Members
+
+1. **By image set**: Divide images into folders, each person annotates their folder
+2. **By label type**: Person A annotates vehicles, Person B annotates pedestrians
+3. **By review phase**: Person A annotates, Person B reviews and corrects
+
+### Merging Annotations
+
+Since labelWise uses CSV format, you can merge work:
+
+```python
+import pandas as pd
+
+# Load multiple CSV exports
+df1 = pd.read_csv('annotations-person-a.csv')
+df2 = pd.read_csv('annotations-person-b.csv')
+
+# Merge and deduplicate
+merged = pd.concat([df1, df2]).drop_duplicates()
+merged.to_csv('annotations-merged.csv', index=False)
+```
+
+## Keyboard-First Workflow
+
+For maximum speed:
+
+1. Pre-create all labels
+2. Select first label
+3. Load images
+4. Draw annotations on first image
+5. `Ctrl/Cmd + C` to copy all annotations
+6. Arrow key or click to next image
+7. `Ctrl/Cmd + V` to paste
+8. Adjust positions
+9. Repeat from step 6
+10. Export CSV every 20 images
+
+<Tip>
+This workflow can achieve 10-15 images per minute for repetitive annotation tasks with consistent object placement.
+</Tip>

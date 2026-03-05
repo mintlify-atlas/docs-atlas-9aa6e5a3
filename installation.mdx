@@ -1,0 +1,449 @@
+---
+title: Installation
+description: Detailed installation instructions, build configuration, and deployment options for labelWise
+---
+
+## Prerequisites
+
+Before installing labelWise, ensure you have the following installed on your system:
+
+### Node.js
+
+labelWise requires Node.js to run the development server and build the application.
+
+<Note>
+  **Recommended Version**: Node.js 18 or higher
+  
+  Check your version:
+  ```bash
+  node --version
+  ```
+</Note>
+
+If you need to install or update Node.js:
+
+- **Download**: Visit [nodejs.org](https://nodejs.org/) and download the LTS version
+- **Using nvm** (recommended):
+  ```bash
+  nvm install 18
+  nvm use 18
+  ```
+
+### Git
+
+Git is required to clone the repository.
+
+```bash
+git --version
+```
+
+If not installed, download from [git-scm.com](https://git-scm.com/).
+
+## Installation
+
+<Steps>
+  <Step title="Clone the Repository">
+    Clone the labelWise repository from GitHub:
+    
+    ```bash
+    git clone https://github.com/yourusername/labelWise.git
+    cd labelWise
+    ```
+  </Step>
+
+  <Step title="Install Dependencies">
+    labelWise supports multiple package managers. Choose the one you prefer:
+    
+    <CodeGroup>
+      ```bash npm
+      npm install
+      ```
+      
+      ```bash pnpm
+      pnpm install
+      ```
+      
+      ```bash yarn
+      yarn install
+      ```
+    </CodeGroup>
+    
+    This will install all dependencies from `package.json`:
+    
+    ```json
+    {
+      "dependencies": {
+        "@tailwindcss/vite": "^4.2.1",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "lucide-react": "^0.576.0",
+        "react": "^19.2.0",
+        "react-dom": "^19.2.0",
+        "sileo": "^0.1.5",
+        "tailwind-merge": "^3.5.0",
+        "tailwindcss": "^4.2.1"
+      },
+      "devDependencies": {
+        "@types/react": "^19.2.7",
+        "@types/react-dom": "^19.2.3",
+        "@vitejs/plugin-react": "^5.1.1",
+        "typescript": "~5.9.3",
+        "vite": "^7.3.1"
+      }
+    }
+    ```
+  </Step>
+</Steps>
+
+## Development
+
+### Start the Development Server
+
+Run the app in development mode with hot module replacement:
+
+<CodeGroup>
+  ```bash npm
+  npm run dev
+  ```
+  
+  ```bash pnpm
+  pnpm dev
+  ```
+  
+  ```bash yarn
+  yarn dev
+  ```
+</CodeGroup>
+
+The app will be available at `http://localhost:5173`.
+
+<Tip>
+  **Vite's Fast HMR**: Changes to your code are reflected instantly in the browser without a full reload. Vite's hot module replacement is extremely fast.
+</Tip>
+
+### Project Structure
+
+Understanding the codebase structure:
+
+```text
+src/
+  App.tsx                      # Main application component
+  main.tsx                     # Entry point with React root
+  index.css                    # Global styles and Tailwind imports
+  features/labelwise/
+    components/                # Feature-specific components
+      lw-select.tsx           # Custom select component
+    constants.ts              # App constants (MIN_BOX_SIZE, GRID_SIZE, etc.)
+    types.ts                  # TypeScript type definitions
+    utils/
+      color.ts                # Label color utilities
+      csv.ts                  # CSV parsing utilities
+  components/ui/              # Reusable UI components (shadcn/ui pattern)
+    badge.tsx
+    button.tsx
+    input.tsx
+    textarea.tsx
+  lib/
+    utils.ts                  # Utility functions (cn, etc.)
+```
+
+### Key Type Definitions
+
+The app uses TypeScript for type safety. Main types from `src/features/labelwise/types.ts`:
+
+```typescript
+export type AnnotationBox = {
+  id: string
+  label: string
+  x: number
+  y: number
+  width: number
+  height: number
+}
+
+export type ImageItem = {
+  id: string
+  file: File
+  url: string
+  annotations: AnnotationBox[]
+  width?: number
+  height?: number
+}
+
+export type CsvRow = {
+  imageId: string
+  annotationId: string
+  label: string
+  x: number
+  y: number
+  width: number
+  height: number
+  imageName: string
+  imageWidth: number | null
+  imageHeight: number | null
+}
+```
+
+## Production Build
+
+### Build the Application
+
+Create an optimized production build:
+
+<CodeGroup>
+  ```bash npm
+  npm run build
+  ```
+  
+  ```bash pnpm
+  pnpm build
+  ```
+  
+  ```bash yarn
+  yarn build
+  ```
+</CodeGroup>
+
+This command:
+
+1. Runs TypeScript compiler (`tsc -b`) to check for type errors
+2. Bundles the app with Vite for production
+3. Outputs optimized files to the `dist/` directory
+
+```json
+// package.json build script
+{
+  "scripts": {
+    "build": "tsc -b && vite build"
+  }
+}
+```
+
+<Note>
+  The build process typically takes 10-30 seconds and creates a `dist/` folder with all static assets.
+</Note>
+
+### Preview Production Build
+
+Test the production build locally before deployment:
+
+<CodeGroup>
+  ```bash npm
+  npm run preview
+  ```
+  
+  ```bash pnpm
+  pnpm preview
+  ```
+  
+  ```bash yarn
+  yarn preview
+  ```
+</CodeGroup>
+
+This serves the `dist/` folder at `http://localhost:4173`.
+
+## Deployment
+
+labelWise is a static web application that can be deployed to any hosting platform that serves static files.
+
+### Vercel (Recommended)
+
+The official demo is hosted on Vercel: [https://label-wise-ashen.vercel.app/](https://label-wise-ashen.vercel.app/)
+
+<Steps>
+  <Step title="Install Vercel CLI">
+    ```bash
+    npm install -g vercel
+    ```
+  </Step>
+  
+  <Step title="Deploy">
+    ```bash
+    vercel
+    ```
+    
+    Follow the prompts to link your project and deploy.
+  </Step>
+</Steps>
+
+<Tip>
+  Vercel automatically detects Vite projects and configures the build settings. No additional configuration needed!
+</Tip>
+
+### Netlify
+
+Deploy to Netlify with drag-and-drop or the CLI:
+
+<Steps>
+  <Step title="Build the app">
+    ```bash
+    npm run build
+    ```
+  </Step>
+  
+  <Step title="Deploy">
+    **Option 1 - Drag & Drop**:
+    1. Go to [netlify.com/drop](https://app.netlify.com/drop)
+    2. Drag the `dist/` folder onto the page
+    
+    **Option 2 - Netlify CLI**:
+    ```bash
+    npm install -g netlify-cli
+    netlify deploy --prod --dir=dist
+    ```
+  </Step>
+</Steps>
+
+### GitHub Pages
+
+Deploy to GitHub Pages with GitHub Actions:
+
+1. Create `.github/workflows/deploy.yml`:
+   
+   ```yaml
+   name: Deploy to GitHub Pages
+   
+   on:
+     push:
+       branches: [main]
+   
+   jobs:
+     build-and-deploy:
+       runs-on: ubuntu-latest
+       steps:
+         - uses: actions/checkout@v3
+         
+         - name: Setup Node.js
+           uses: actions/setup-node@v3
+           with:
+             node-version: '18'
+             
+         - name: Install and Build
+           run: |
+             npm install
+             npm run build
+             
+         - name: Deploy
+           uses: peaceiris/actions-gh-pages@v3
+           with:
+             github_token: ${{ secrets.GITHUB_TOKEN }}
+             publish_dir: ./dist
+   ```
+
+2. Enable GitHub Pages in repository settings and select the `gh-pages` branch
+
+### Static File Servers
+
+Serve the `dist/` folder with any static file server:
+
+<CodeGroup>
+  ```bash serve
+  npx serve dist
+  ```
+  
+  ```bash http-server
+  npx http-server dist
+  ```
+  
+  ```bash python
+  cd dist
+  python -m http.server 8000
+  ```
+</CodeGroup>
+
+## Environment Setup
+
+### Development Environment
+
+labelWise runs entirely in the browser with no backend required. However, you may want to configure:
+
+#### Port Configuration
+
+Change the default Vite dev server port by editing `vite.config.ts` or using CLI flags:
+
+```bash
+npm run dev -- --port 3000
+```
+
+#### Editor Setup
+
+Recommended VS Code extensions:
+
+- **ESLint**: For linting
+- **Prettier**: For code formatting
+- **Tailwind CSS IntelliSense**: For Tailwind class autocomplete
+- **TypeScript**: Built-in, but ensure it's enabled
+
+### Linting
+
+Run ESLint to check for code quality issues:
+
+<CodeGroup>
+  ```bash npm
+  npm run lint
+  ```
+  
+  ```bash pnpm
+  pnpm lint
+  ```
+  
+  ```bash yarn
+  yarn lint
+  ```
+</CodeGroup>
+
+ESLint configuration is in the project root with React and TypeScript rules enabled.
+
+## Troubleshooting
+
+### Common Issues
+
+<AccordionGroup>
+  <Accordion title="Port 5173 already in use">
+    Either kill the process using the port or specify a different port:
+    
+    ```bash
+    npm run dev -- --port 3000
+    ```
+  </Accordion>
+  
+  <Accordion title="TypeScript errors during build">
+    Ensure all type errors are resolved:
+    
+    ```bash
+    npx tsc --noEmit
+    ```
+    
+    This runs the TypeScript compiler without emitting files to check for errors.
+  </Accordion>
+  
+  <Accordion title="Module not found errors">
+    Delete `node_modules` and reinstall:
+    
+    ```bash
+    rm -rf node_modules package-lock.json
+    npm install
+    ```
+  </Accordion>
+  
+  <Accordion title="Images not loading after deployment">
+    Check that your static asset paths are correct. Vite automatically handles asset imports, but ensure:
+    
+    - Image imports use relative paths
+    - Public assets are in the `public/` directory
+    - Base URL is configured correctly in `vite.config.ts` if deploying to a subdirectory
+  </Accordion>
+</AccordionGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Learn how to create your first annotation
+  </Card>
+  
+  <Card title="Introduction" icon="book" href="/introduction">
+    Explore all features and use cases
+  </Card>
+</CardGroup>

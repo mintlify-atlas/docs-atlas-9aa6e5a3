@@ -1,0 +1,61 @@
+---
+title: 'parseCsv'
+description: 'Parse CSV strings into a two-dimensional array of strings'
+---
+
+## Function Signature
+
+```typescript
+export const parseCsv = (raw: string): string[][]
+```
+
+## Parameters
+
+<ParamField path="raw" type="string" required>
+  The raw CSV string to parse
+</ParamField>
+
+## Returns
+
+<ResponseField name="string[][]" type="array">
+  A two-dimensional array where each inner array represents a row of CSV data, and each string represents a cell value
+</ResponseField>
+
+## Description
+
+The `parseCsv` function parses a CSV (Comma-Separated Values) string into a structured two-dimensional array. It handles:
+
+- **Quoted fields**: Values enclosed in double quotes can contain commas and newlines
+- **Escape sequences**: Double quotes within quoted fields are escaped as `""` (two consecutive quotes)
+- **Line endings**: Supports both `\n` and `\r\n` line endings
+- **Whitespace trimming**: Automatically trims whitespace from unquoted cell values
+
+## Example Usage
+
+```typescript
+import { parseCsv } from '@/features/labelwise/utils/csv'
+
+// Basic CSV parsing
+const basicCsv = 'Name,Age,City\nAlice,30,Seattle\nBob,25,Portland'
+const result = parseCsv(basicCsv)
+// Returns: [['Name', 'Age', 'City'], ['Alice', '30', 'Seattle'], ['Bob', '25', 'Portland']]
+
+// CSV with quoted fields containing commas
+const quotedCsv = 'Name,Description\n"Smith, John","Engineer, Senior"'
+const quotedResult = parseCsv(quotedCsv)
+// Returns: [['Name', 'Description'], ['Smith, John', 'Engineer, Senior']]
+
+// CSV with escaped quotes
+const escapedCsv = 'Quote,Author\n"He said ""Hello"" to me",John'
+const escapedResult = parseCsv(escapedCsv)
+// Returns: [['Quote', 'Author'], ['He said "Hello" to me', 'John']]
+```
+
+## Implementation Details
+
+The parser uses a state machine approach with an `inQuotes` flag to track whether the current position is inside a quoted field. This allows it to correctly handle:
+
+- Commas inside quoted strings (not treated as delimiters)
+- Newlines inside quoted strings (not treated as row separators)
+- Escaped double quotes (`""` becomes `"`)
+- Mixed quoted and unquoted fields in the same row

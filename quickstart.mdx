@@ -1,80 +1,199 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quick Start
+description: Get up and running with labelWise in 5 minutes
 ---
 
-## Get started in three steps
+## Get Started in 5 Minutes
 
-Get your documentation site running locally and make your first customization.
+This guide will walk you through setting up labelWise and creating your first annotation.
 
-### Step 1: Set up your local environment
-
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
+<Steps>
+  <Step title="Clone the Repository">
+    First, clone the labelWise repository to your local machine:
     
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
+    ```bash
+    git clone https://github.com/yourusername/labelWise.git
+    cd labelWise
+    ```
     
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
+    <Note>
+      Make sure you have Git installed on your system. If not, download it from [git-scm.com](https://git-scm.com/).
+    </Note>
+  </Step>
 
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
+  <Step title="Install Dependencies">
+    Install all required packages using npm:
     
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
+    ```bash
+    npm install
+    ```
+    
+    This will install all dependencies listed in `package.json`, including:
+    - React 19
+    - TypeScript
+    - Vite
+    - Tailwind CSS v4
+    - lucide-react, sileo, and other UI libraries
+    
+    <Tip>
+      The installation typically takes 1-2 minutes depending on your internet connection.
+    </Tip>
+  </Step>
 
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
+  <Step title="Start the Development Server">
+    Launch the app in development mode:
+    
+    ```bash
+    npm run dev
+    ```
+    
+    Vite will start the development server and display the local URL:
+    
+    ```plaintext
+    VITE v7.3.1  ready in 543 ms
+    
+    ➜  Local:   http://localhost:5173
+    ➜  Network: use --host to expose
+    ```
+    
+    Open your browser and navigate to `http://localhost:5173` to see the app running.
+  </Step>
 
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
+  <Step title="Upload Your First Image">
+    In the labelWise interface:
+    
+    1. Click the **"Cargar imágenes"** button in the top-right header
+    2. Select one or more image files from your computer (JPEG, PNG, etc.)
+    3. The images will appear in the left sidebar under **"Lista"**
+    
+    ```typescript
+    // The app filters for valid image files automatically
+    const onlyImages = files.filter((file) => file.type.startsWith("image/"))
+    ```
+    
+    <Note>
+      You'll see a toast notification confirming how many images were loaded.
+    </Note>
+  </Step>
 
-### Step 3: Go live
+  <Step title="Create Your First Label">
+    Before drawing annotations, you need to create labels:
+    
+    1. In the right sidebar under **"Etiquetas"**, find the input field labeled "Nueva etiqueta"
+    2. Type a label name (e.g., "car", "person", "dog")
+    3. Click **"Agregar"** or press Enter
+    
+    <Tip>
+      **Bulk Import**: You can also paste multiple labels separated by commas or newlines into the "Lote" textarea and click "Agregar lote". For example:
+      
+      ```
+      car, person, bicycle, truck, traffic light
+      ```
+    </Tip>
+    
+    The label will appear in the list below and become the active label (highlighted).
+  </Step>
 
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
+  <Step title="Draw Your First Annotation">
+    Now you're ready to annotate:
+    
+    1. Ensure **"Dibujar"** mode is selected (not "Mover")
+    2. Click and drag on the image to draw a bounding box
+    3. Release the mouse to create the annotation
+    
+    ```typescript
+    // Minimum bounding box size is enforced
+    const MIN_BOX_SIZE = 8
+    
+    if (width < MIN_BOX_SIZE || height < MIN_BOX_SIZE) return
+    ```
+    
+    <Note>
+      The bounding box will be labeled with your active label and appear in your chosen color.
+    </Note>
+    
+    ### Edit Annotations
+    
+    - **Move**: Click and drag a bounding box to reposition it
+    - **Resize**: Click a bounding box to select it, then drag the corner handles
+    - **Multi-select**: Hold `Ctrl/Cmd` and click multiple boxes
+    - **Copy/Paste**: Select boxes and use `Ctrl/Cmd + C` to copy, `Ctrl/Cmd + V` to paste
+    - **Delete**: Select a box and remove it from the list in the right sidebar
+  </Step>
 
-## Next steps
+  <Step title="Export Your Annotations as CSV">
+    Once you've created annotations, export them:
+    
+    1. Click **"Exportar CSV"** in the top-right header
+    2. A CSV file will download with the naming pattern: `annotations-YYYY-MM-DD.csv`
+    
+    The exported CSV follows this schema:
+    
+    ```csv
+    label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+    "car",2660,2640,757,241,"image_001.png",3613,10821
+    "person",2660,2904,757,217,"image_001.png",3613,10821
+    ```
+    
+    ```typescript
+    // Export implementation in App.tsx:477
+    const exportCsv = () => {
+      const rows = ["label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height"]
+      // ... rows are built from annotations
+      const blob = new Blob([rows.join("\n")], { type: "text/csv;charset=utf-8;" })
+      // ... download is triggered
+    }
+    ```
+  </Step>
+</Steps>
 
-Now that you have your docs running, explore these key features:
+## Additional Features to Explore
+
+Now that you've created your first annotation, try these advanced features:
+
+### Zoom & Pan
+
+- Use the **+** and **-** buttons to zoom in/out (50% to 300%)
+- Click **"Mover"** mode and drag to pan across large images
+- Click **"Reset"** to return to 100% zoom
+
+### Grid Guide
+
+- Toggle **"Guía"** to show/hide a grid overlay
+- Grid spacing is 32 pixels for consistent alignment
+
+```typescript
+// Grid is rendered with CSS background pattern
+const GRID_SIZE = 32
+```
+
+### CSV Table View
+
+- Click the **"CSV"** button in the center panel header
+- View all annotations in table format
+- Edit coordinates and labels directly in the table
+- Click any row to jump to that annotation
+
+### Import Existing Annotations
+
+- Click **"Importar CSV"** in the header
+- Select a CSV file matching the schema
+- Annotations are automatically mapped to images by filename
+
+```typescript
+// CSV import maps annotations by image_name column
+const parsedByImage = new Map<string, AnnotationBox[]>()
+// ... parsing logic matches image.file.name
+```
+
+## Next Steps
 
 <CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
+  <Card title="Installation Guide" icon="gear" href="/installation">
+    Learn about production builds, deployment options, and environment setup
+  </Card>
+  
+  <Card title="Introduction" icon="book" href="/introduction">
+    Dive deeper into labelWise features and use cases
+  </Card>
 </CardGroup>
-
-<Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
-</Note>

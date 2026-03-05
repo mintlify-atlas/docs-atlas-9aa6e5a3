@@ -1,0 +1,73 @@
+---
+title: Keyboard Shortcuts
+description: Complete reference for all keyboard shortcuts available in labelWise
+---
+
+## Overview
+
+labelWise provides keyboard shortcuts to speed up your annotation workflow. All shortcuts work when you're focused on the canvas (not typing in input fields).
+
+## Available Shortcuts
+
+| Shortcut | Action | Description |
+|----------|--------|-------------|
+| `Ctrl/Cmd + C` | Copy Annotations | Copies the currently selected annotation(s) to clipboard |
+| `Ctrl/Cmd + V` | Paste Annotations | Pastes copied annotation(s) to the current image with an 18px offset |
+| `Ctrl/Cmd + Click` | Multi-Select | Adds or removes annotation from selection |
+| `Enter` | Add Label | When focused on label input, creates a new label |
+
+## Copy and Paste Workflow
+
+The copy/paste functionality in labelWise is designed for efficient bulk annotation:
+
+### Copying Annotations
+
+1. Select one or more annotations by clicking on them
+2. Hold `Ctrl` (Windows/Linux) or `Cmd` (Mac) and click to add more annotations to your selection
+3. Press `Ctrl/Cmd + C` to copy the selected annotations
+4. A notification will confirm: "Se copiaron X cuadro(s)"
+
+### Pasting Annotations
+
+1. Navigate to any image (including the same image)
+2. Press `Ctrl/Cmd + V` to paste
+3. Pasted annotations appear with an 18px offset from their original position
+4. Each paste increments the offset (18px, 36px, 54px, etc.)
+5. Pasted annotations are automatically selected
+
+<Note>
+The paste offset resets when you:
+- Copy new annotations
+- Switch to a different image
+- The counter is tracked per copy operation
+</Note>
+
+## Multi-Selection
+
+Hold `Ctrl` (Windows/Linux) or `Cmd` (Mac) while clicking annotations to build a selection:
+
+- Click an unselected annotation to add it to the selection
+- Click a selected annotation to remove it from the selection
+- The most recently selected annotation becomes the "primary" selection
+- Multi-selected annotations can be copied together with `Ctrl/Cmd + C`
+
+<Tip>
+You can select annotations across the canvas view or by clicking rows in the CSV view while holding `Ctrl/Cmd`.
+</Tip>
+
+## Limitations
+
+<Warning>
+Keyboard shortcuts are disabled when you're typing in:
+- Label input fields
+- Bulk label textarea
+- CSV cell editors
+- Any other text input or textarea element
+</Warning>
+
+## Tips for Efficient Use
+
+1. **Duplicate similar objects**: Copy an annotation, paste multiple times, then adjust positions
+2. **Template workflow**: Create perfect annotations on one image, copy them, paste across similar images
+3. **Batch labeling**: Select multiple annotations, ensure they're all correct, then move to the next image
+4. **Quick selection**: Use `Ctrl/Cmd + Click` in CSV view to quickly select multiple annotations from the data table

@@ -1,0 +1,179 @@
+---
+title: CSV Format Specification
+description: Detailed documentation of the CSV import/export format used by labelWise
+---
+
+## Overview
+
+labelWise uses a standardized CSV format for importing and exporting bounding box annotations. This format is compatible with common computer vision workflows and can be easily integrated into ML pipelines.
+
+## CSV Schema
+
+### Column Definitions
+
+| Column Name | Data Type | Required | Description |
+|-------------|-----------|----------|-------------|
+| `label_name` | string | Yes | The label/class name for the annotation (converted to lowercase) |
+| `bbox_x` | number | Yes | X coordinate of the top-left corner of the bounding box (in pixels) |
+| `bbox_y` | number | Yes | Y coordinate of the top-left corner of the bounding box (in pixels) |
+| `bbox_width` | number | Yes | Width of the bounding box (in pixels, must be > 0) |
+| `bbox_height` | number | Yes | Height of the bounding box (in pixels, must be > 0) |
+| `image_name` | string | Yes | Exact filename of the image (case-sensitive, must match loaded image) |
+| `image_width` | number | Optional | Width of the source image in pixels |
+| `image_height` | number | Optional | Height of the source image in pixels |
+
+<Note>
+All column names are case-insensitive during import. The parser converts them to lowercase before matching.
+</Note>
+
+## Export Format
+
+When you export annotations from labelWise, the CSV is generated with the following characteristics:
+
+### Header Row
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+```
+
+### Data Rows
+
+- **Quoted strings**: `label_name` and `image_name` are always wrapped in double quotes
+- **Escaped quotes**: Internal quotes in filenames are escaped as `""`
+- **Numeric precision**: Coordinates are rounded to integers using `.toFixed(0)`
+- **Empty values**: `image_width` and `image_height` are empty strings if dimensions are unknown
+
+### Example Export
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+"car",120,200,150,100,"street_photo.jpg",1920,1080
+"person",450,180,80,220,"street_photo.jpg",1920,1080
+"dog",50,300,90,75,"park_scene.png",1280,720
+"bicycle",200,250,120,140,"park_scene.png",1280,720
+```
+
+## Import Behavior
+
+### Parsing Process
+
+The `parseCsv` function implements a custom CSV parser with the following features:
+
+1. **Quote handling**: Supports double-quoted fields with internal commas
+2. **Escaped quotes**: Recognizes `""` as an escaped double quote
+3. **Line endings**: Handles both `\n` and `\r\n` line endings
+4. **Whitespace**: Automatically trims whitespace from cells
+
+### Validation Rules
+
+During import, each row is validated:
+
+```typescript
+// Row is skipped if any of these conditions fail:
+- imageName must be non-empty after trimming
+- label must be non-empty after trimming
+- x, y, width, height must all be finite numbers
+- width must be > 0
+- height must be > 0
+```
+
+### Image Matching
+
+Annotations are matched to loaded images by **exact filename comparison**:
+
+```typescript
+const imported = parsedByImage.get(image.file.name)
+```
+
+<Warning>
+**Critical**: The `image_name` column must exactly match the filename of a loaded image, including:
+- File extension (`.jpg`, `.png`, etc.)
+- Letter casing
+- Spaces and special characters
+
+Annotations for unmatched images are ignored silently.
+</Warning>
+
+### Label Creation
+
+During import:
+- All `label_name` values are converted to lowercase
+- New labels are automatically added to your label list
+- Existing labels are preserved and merged with imported labels
+- Label colors are auto-generated for new labels
+
+### Import Success Feedback
+
+After import, labelWise displays:
+- **Valid rows**: Number of rows that passed validation
+- **Matched images**: Number of loaded images that received annotations
+- **Imported boxes**: Total number of annotations added
+
+## Common CSV Examples
+
+### Single Object Per Image
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+"cat",150,200,120,100,"photo1.jpg",800,600
+"dog",200,150,100,120,"photo2.jpg",800,600
+```
+
+### Multiple Objects Per Image
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+"person",100,50,80,200,"crowd.jpg",1920,1080
+"person",300,60,75,190,"crowd.jpg",1920,1080
+"person",500,80,85,210,"crowd.jpg",1920,1080
+```
+
+### Without Image Dimensions
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+"tree",50,100,150,200,"forest.png",,
+"tree",250,120,140,180,"forest.png",,
+```
+
+### Filenames with Special Characters
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+"car",100,200,150,100,"My Photo (1).jpg",1920,1080
+"sign",50,80,60,40,"Image ""quoted"".png",800,600
+```
+
+## Integration with labelWise
+
+### Pre-Import Checklist
+
+1. ✅ Load all images into labelWise first
+2. ✅ Verify image filenames match exactly (check spaces, extensions)
+3. ✅ Ensure CSV has all required columns
+4. ✅ Validate that coordinates are within image bounds
+5. ✅ Check that width and height are positive numbers
+
+### Import Process
+
+1. Click **Importar CSV** button
+2. Select your CSV file
+3. labelWise validates the format and columns
+4. Annotations are matched to loaded images by filename
+5. New labels are created automatically
+6. Existing annotations are **replaced** (not merged)
+
+<Warning>
+**Important**: Importing a CSV replaces all existing annotations for matched images. There is no undo.
+</Warning>
+
+### Export Process
+
+1. Annotate your images
+2. Click **Exportar CSV**
+3. File downloads as `annotations-YYYY-MM-DD.csv`
+4. Only images with at least one annotation are included
+
+## Troubleshooting CSV Issues
+
+See the [Troubleshooting guide](/guides/troubleshooting#csv-import-failures) for common CSV import problems and solutions.

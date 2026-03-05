@@ -1,0 +1,112 @@
+---
+title: Image Management
+description: Learn how to upload, browse, select, and remove images in labelWise
+---
+
+## Overview
+
+labelWise allows you to manage multiple images for annotation. You can upload images in bulk, browse through your image library, select images to annotate, and remove images when needed.
+
+<Note>
+  The image filename (`file.name`) is used as the unique identifier when matching CSV imports to images. Make sure your image filenames match the `image_name` column in your CSV files.
+</Note>
+
+## Uploading Images
+
+To add images to your annotation workspace:
+
+1. Click the **Cargar imágenes** button in the header
+2. Select one or multiple image files from your computer
+3. Only valid image files (files with MIME type starting with `image/`) will be added
+4. A success notification will show how many images were added to the dataset
+
+<Tip>
+  You can select multiple images at once using your operating system's multi-select functionality (Ctrl+Click or Shift+Click on Windows/Linux, Cmd+Click on Mac).
+</Tip>
+
+### What Happens After Upload
+
+- Each image is assigned a unique ID based on its filename, last modified timestamp, and a random UUID
+- Images are displayed in the image list panel on the left side of the interface
+- If this is your first upload, the first image is automatically selected for annotation
+- Object URLs are created for displaying images in the browser
+
+<Warning>
+  If you select non-image files, they will be filtered out and only valid images will be uploaded. You'll see a warning if no valid images were selected.
+</Warning>
+
+## Browsing the Image List
+
+The image list is located in the left panel of the application. Each image card displays:
+
+- **Thumbnail**: A small preview of the image
+- **Filename**: The name of the image file
+- **Annotation count**: Number of bounding boxes ("cuadros") on this image
+- **Remove button**: An X icon that appears on hover
+
+### Image List Features
+
+- The currently selected image is highlighted with a primary border and secondary background
+- Hover over any image card to see the border change color
+- The list is scrollable if you have many images
+- A badge at the top shows the total number of images loaded
+
+<Note>
+  The image list shows "Aún no hay imágenes cargadas" (No images loaded yet) when your workspace is empty.
+</Note>
+
+## Selecting an Image to Annotate
+
+To work on a specific image:
+
+1. Click on any image card in the image list
+2. The image will be loaded in the canvas panel
+3. The image's existing annotations (if any) will be displayed
+4. You can now draw new bounding boxes or edit existing ones
+
+### When You Select an Image
+
+The following happens automatically:
+
+- Canvas zoom is reset to 100%
+- Pan position is reset to center
+- Any drawing in progress is cancelled
+- Annotation selections are cleared
+- The canvas displays the selected image with all its annotations
+
+## Removing Images
+
+To delete an image from your workspace:
+
+1. Hover over the image card in the image list
+2. Click the **X** button that appears on the right side
+3. Confirm the action (the image and all its annotations will be removed)
+
+<Warning>
+  Removing an image permanently deletes all associated annotations. This action cannot be undone.
+</Warning>
+
+### After Removal
+
+- If the removed image was currently selected, the next image in the list (or the first image) is automatically selected
+- The object URL for the image is revoked to free up memory
+- All annotation selections are cleared
+- An info notification confirms the image and its annotations were removed
+
+## Image File Name Matching
+
+The `file.name` property is critical for CSV operations:
+
+- **CSV Import**: When you import a CSV file, annotations are matched to images by comparing the `image_name` column to each image's `file.name`
+- **CSV Export**: The exported CSV includes the `image_name` column populated with each image's `file.name`
+
+<Tip>
+  If you plan to import annotations via CSV, make sure your CSV's `image_name` values exactly match your image filenames, including file extensions.
+</Tip>
+
+## Best Practices
+
+- **Consistent naming**: Use clear, consistent filenames for your images to make CSV matching easier
+- **Avoid duplicates**: While the system assigns unique IDs, having images with identical filenames can be confusing
+- **Organize first**: Upload all images you plan to annotate in a session to avoid switching contexts
+- **Regular exports**: Export your CSV regularly to avoid losing work if images are accidentally removed

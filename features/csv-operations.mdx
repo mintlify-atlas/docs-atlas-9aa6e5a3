@@ -1,0 +1,298 @@
+---
+title: CSV Operations
+description: Learn how to import, edit, and export annotations using CSV files in labelWise
+---
+
+## Overview
+
+labelWise uses CSV (Comma-Separated Values) files as the primary format for importing and exporting annotation data. This allows you to work with annotations in spreadsheet applications, share datasets, and integrate with machine learning pipelines.
+
+## CSV Schema Format
+
+The CSV format used by labelWise has eight required columns:
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+```
+
+### Column Descriptions
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `label_name` | string | The label/class of the annotated object (e.g., "person", "car") |
+| `bbox_x` | number | X coordinate of the top-left corner of the bounding box |
+| `bbox_y` | number | Y coordinate of the top-left corner of the bounding box |
+| `bbox_width` | number | Width of the bounding box in pixels |
+| `bbox_height` | number | Height of the bounding box in pixels |
+| `image_name` | string | Filename of the image (must match the actual image file) |
+| `image_width` | number | Width of the image in pixels (can be empty) |
+| `image_height` | number | Height of the image in pixels (can be empty) |
+
+<Note>
+  All column names are case-insensitive during import. The parser converts headers to lowercase and matches them accordingly.
+</Note>
+
+### Example CSV Rows
+
+Here's an example CSV file with multiple annotations:
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+"person",120,45,80,150,"street_scene.jpg",1920,1080
+"car",450,200,200,120,"street_scene.jpg",1920,1080
+"person",750,100,70,140,"street_scene.jpg",1920,1080
+"dog",50,300,60,80,"park_photo.jpg",1280,720
+"cat",200,250,55,70,"park_photo.jpg",1280,720
+```
+
+<Tip>
+  Label names are automatically converted to lowercase during import to ensure consistency across your dataset.
+</Tip>
+
+## Importing CSV Files
+
+To import annotations from a CSV file:
+
+1. Click the **Importar CSV** button in the header
+2. Select a CSV file from your computer
+3. The file is parsed and validated
+4. Annotations are matched to images by `image_name`
+5. Labels from the CSV are added to your label list
+6. A success notification shows import statistics
+
+### Import Process Details
+
+1. **File Reading**: The CSV content is read as text
+2. **Parsing**: Rows are parsed using the custom CSV parser
+3. **Header Validation**: Required columns are checked (case-insensitive)
+4. **Row Validation**: Each data row is validated:
+   - `image_name` and `label_name` must not be empty
+   - `bbox_x`, `bbox_y`, `bbox_width`, `bbox_height` must be valid numbers
+   - `bbox_width` and `bbox_height` must be greater than zero
+5. **Matching**: Annotations are matched to loaded images by filename
+6. **Replacement**: Existing annotations are replaced with imported ones
+7. **Label Merging**: New labels are added to the existing label list
+
+<Warning>
+  Importing a CSV replaces all existing annotations for matched images. Any previous annotations on those images will be lost.
+</Warning>
+
+### Import Validation
+
+The import will fail if:
+
+- The CSV has no data rows (only headers)
+- Required columns are missing
+- Column names don't match the expected format
+
+ Invalid rows are skipped, and valid rows are imported. The success notification shows:
+- Number of annotations imported
+- Number of images matched
+- Number of valid rows processed
+
+<Note>
+  If no images in your workspace match the `image_name` values in the CSV, the import will succeed but no annotations will be applied. Load your images first, then import the CSV.
+</Note>
+
+## Matching Images by Name
+
+The `image_name` column is critical for linking annotations to images:
+
+### How Matching Works
+
+1. For each row in the CSV, the `image_name` value is extracted
+2. The system searches through loaded images for a matching `file.name`
+3. If a match is found, the annotation is added to that image
+4. If no match is found, the annotation is skipped
+
+### Matching Requirements
+
+- Filenames must match **exactly** (case-sensitive)
+- Include the file extension (e.g., ".jpg", ".png")
+- Special characters in filenames are supported
+- Spaces in filenames are allowed
+
+<Tip>
+  If your CSV import shows fewer matched images than expected, check that your `image_name` values exactly match your image filenames, including extensions.
+</Tip>
+
+### Example Matching Scenarios
+
+| Image Filename | CSV image_name | Match? |
+|----------------|----------------|--------|
+| `photo.jpg` | `photo.jpg` | ✅ Yes |
+| `photo.jpg` | `Photo.jpg` | ❌ No (case mismatch) |
+| `photo.jpg` | `photo.png` | ❌ No (extension mismatch) |
+| `my photo.jpg` | `my photo.jpg` | ✅ Yes |
+| `photo.jpg` | `photo` | ❌ No (missing extension) |
+
+## CSV Table View
+
+labelWise includes a built-in CSV viewer and editor:
+
+### Accessing CSV View
+
+1. In the center panel, find the **Panel de anotación** header
+2. Click the **CSV** button (next to the **Canvas** button)
+3. The view switches to show a table of all annotations
+
+### Table Features
+
+- **Scrollable**: Table scrolls horizontally and vertically for large datasets
+- **Sticky header**: Column headers remain visible while scrolling
+- **Row highlighting**: Hover over rows to highlight them
+- **Selection**: Click rows to select annotations (Ctrl/Cmd+Click for multi-select)
+- **Editable**: Modify annotation values directly in the table
+
+### Table Columns
+
+The table displays all eight columns:
+
+1. `label_name` - Dropdown selector for changing labels
+2. `bbox_x` - Number input for X coordinate
+3. `bbox_y` - Number input for Y coordinate
+4. `bbox_width` - Number input for width
+5. `bbox_height` - Number input for height
+6. `image_name` - Read-only display of filename
+7. `image_width` - Read-only display of image width
+8. `image_height` - Read-only display of image height
+
+<Note>
+  If there are no annotations in your workspace, the CSV view displays: "No hay filas para mostrar en el CSV actual" (No rows to show in current CSV).
+</Note>
+
+## Editing in CSV View
+
+You can edit annotations directly in the CSV table:
+
+### Changing Labels
+
+1. Click the dropdown in the `label_name` column
+2. Select a new label from the list
+3. The annotation updates immediately
+4. The bounding box color changes to match the new label
+
+### Modifying Coordinates and Dimensions
+
+1. Click in a number input field (`bbox_x`, `bbox_y`, `bbox_width`, `bbox_height`)
+2. Type the new value
+3. Press Enter or click outside the field
+4. The annotation updates immediately
+
+### Edit Constraints
+
+- **Position**: X and Y values are clamped to keep boxes within image boundaries
+- **Size**: Width and height cannot be less than minimum box size
+- **Validation**: Non-numeric values are rejected
+- **Boundaries**: Edits that would push the box outside the image are automatically adjusted
+
+<Tip>
+  Use CSV view for batch editing of coordinates when you need precise numeric adjustments that are difficult to achieve by dragging on the canvas.
+</Tip>
+
+### Selecting Annotations from CSV
+
+- Click a row to select that annotation
+- Hold **Ctrl** (Windows/Linux) or **Cmd** (Mac) to multi-select
+- Selected rows have a secondary background color
+- Clicking a row also:
+  - Switches the current image to the annotation's image
+  - Selects the annotation (visible if you switch back to Canvas view)
+
+## Exporting CSV Files
+
+To export your annotations as a CSV file:
+
+1. Click the **Exportar CSV** button in the header
+2. The CSV file is generated and downloaded automatically
+3. Filename format: `annotations-YYYY-MM-DD.csv`
+4. A success notification shows the number of rows exported
+
+### Export Process
+
+1. **Header Row**: The CSV starts with the column headers
+2. **Data Rows**: For each image with annotations:
+   - Each annotation becomes one row
+   - Coordinates are rounded to whole numbers
+   - Image names with quotes are escaped (" becomes "")
+   - Empty images (no annotations) are skipped
+3. **File Creation**: A Blob is created with text/csv content type
+4. **Download**: The browser's download mechanism is triggered
+
+<Note>
+  The export button is disabled if you have no images loaded. You need at least one image to export, even if it has no annotations.
+</Note>
+
+### Export Behavior
+
+- **Images without annotations**: Not included in the export
+- **Empty dataset**: Shows a warning: "Sin datos para exportar" (No data to export)
+- **Coordinate format**: All coordinates are formatted to zero decimal places using `.toFixed(0)`
+- **Special characters**: Filenames containing quotes or commas are properly escaped
+
+### Example Export
+
+If you have 2 images with 5 total annotations, the export will:
+
+- Create a CSV with 6 lines (1 header + 5 data rows)
+- Name the file like `annotations-2026-03-05.csv`
+- Show notification: "CSV exportado - Archivo generado con 5 fila(s)"
+
+## CSV Workflow Best Practices
+
+### Import Workflow
+
+1. **Prepare your CSV**: Ensure column names match the required schema
+2. **Load images first**: Upload all images before importing the CSV
+3. **Verify filenames**: Double-check that `image_name` values match your actual filenames
+4. **Import CSV**: Click **Importar CSV** and select your file
+5. **Review results**: Check the success notification for import statistics
+6. **Verify in canvas**: Switch to Canvas view and check a few images
+
+### Export Workflow
+
+1. **Annotate thoroughly**: Complete all annotations before exporting
+2. **Review in CSV view**: Use the CSV table to spot-check your data
+3. **Export regularly**: Don't wait until the end - export frequently to avoid data loss
+4. **Check the file**: Open the exported CSV in a spreadsheet to verify
+5. **Backup**: Keep multiple versions of exports as you progress
+
+### Data Management
+
+- **Use consistent labels**: Stick to your labeling scheme across sessions
+- **Validate before export**: Review annotations in both Canvas and CSV view
+- **Version your exports**: Keep dated backups of your CSV files
+- **Test imports**: Test importing your CSV on a subset of images before committing
+
+<Warning>
+  Always keep backup copies of your exported CSV files. The web application does not persist data between sessions.
+</Warning>
+
+## Troubleshooting
+
+### Import Issues
+
+**Problem**: "Formato inválido" error
+- **Solution**: Check that your CSV has all required columns with correct names
+
+**Problem**: No annotations appear after import
+- **Solution**: Verify that `image_name` values in CSV match your loaded image filenames exactly
+
+**Problem**: Fewer annotations than expected
+- **Solution**: Check for invalid rows (empty labels, invalid numbers, zero/negative dimensions)
+
+### Export Issues
+
+**Problem**: Export button is disabled
+- **Solution**: Load at least one image (annotations are not required)
+
+**Problem**: CSV has fewer rows than expected
+- **Solution**: Images without annotations are not included in the export
+
+### CSV View Issues
+
+**Problem**: Can't edit values in CSV table
+- **Solution**: Click directly in the input fields or dropdowns to edit
+
+**Problem**: Changes don't save
+- **Solution**: Changes are applied immediately - export to save them to a file

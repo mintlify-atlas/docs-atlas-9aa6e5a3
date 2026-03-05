@@ -1,0 +1,242 @@
+---
+title: Annotations
+description: Learn how to create, edit, and manage bounding box annotations in labelWise
+---
+
+## Overview
+
+Annotations in labelWise are bounding boxes that you draw on images to identify and label objects. Each annotation includes a label, position (x, y), and dimensions (width, height).
+
+## Creating Labels
+
+Before you can annotate images, you need to create labels for the types of objects you want to identify.
+
+### Adding a Single Label
+
+1. In the right panel under **Etiquetas** (Labels), find the "Nueva etiqueta" input field
+2. Type your label name (e.g., "person", "car", "dog")
+3. Press **Enter** or click the **Agregar** button
+4. The label is automatically converted to lowercase
+
+<Note>
+  If you try to add a label that already exists, you'll see an info notification saying the label is already registered.
+</Note>
+
+### Adding Multiple Labels at Once
+
+For bulk label creation:
+
+1. Find the textarea labeled "Lote: perro, gato, carro" in the right panel
+2. Enter multiple labels separated by commas or newlines
+3. Click the **Agregar lote** button
+4. All unique labels will be added to your label list
+
+<Tip>
+  You can paste a list of labels from a text file or spreadsheet directly into the bulk input field.
+</Tip>
+
+### Label Properties
+
+- Labels are stored in lowercase to ensure consistency
+- Each label is assigned a random color for visual distinction
+- The color is used for bounding box borders and fills
+- Labels persist across your annotation session
+
+## Selecting the Active Label
+
+The active label determines which label will be assigned to newly drawn bounding boxes.
+
+1. In the right panel, find the **Etiqueta activa** (Active Label) section
+2. Use the dropdown menu to select your desired label
+3. A color bar below the dropdown shows the active label's color
+4. All new bounding boxes will use this label until you change it
+
+<Note>
+  You need to have an image selected and at least one label created before you can set an active label.
+</Note>
+
+## Drawing Bounding Boxes
+
+With an image selected and an active label set, you can draw bounding boxes:
+
+1. Make sure you're in **Dibujar** (Draw) mode (button is highlighted in the canvas controls)
+2. Click and hold on the canvas where you want to start the box
+3. Drag to create the bounding box
+4. Release the mouse button to finish
+5. The box is created if it meets the minimum size requirement
+
+### Drawing Behavior
+
+- The cursor changes to a crosshair in draw mode
+- While dragging, you see a preview of the box being drawn
+- The preview box uses the active label's color
+- If the box is too small (less than minimum size), it won't be created
+- Boxes are automatically clamped to stay within the image boundaries
+
+<Tip>
+  Draw boxes slightly larger than your target object to ensure you capture all important features.
+</Tip>
+
+## Moving Bounding Boxes
+
+To reposition an existing annotation:
+
+1. Click on the bounding box to select it
+2. Click and drag from anywhere inside the box (not on the resize handles)
+3. Move the box to the desired location
+4. Release to complete the move
+
+### Move Constraints
+
+- Boxes cannot be moved outside the image boundaries
+- The box's dimensions remain unchanged during movement
+- Other annotations are not affected
+
+## Resizing Bounding Boxes
+
+Each selected bounding box has four resize handles:
+
+- **Northwest corner** (top-left): Cursor changes to nwse-resize
+- **Northeast corner** (top-right): Cursor changes to nesw-resize
+- **Southwest corner** (bottom-left): Cursor changes to nesw-resize
+- **Southeast corner** (bottom-right): Cursor changes to nwse-resize
+
+To resize:
+
+1. Select the bounding box by clicking on it
+2. Click and drag one of the four corner handles
+3. Resize to your desired dimensions
+4. Release to complete the resize
+
+### Resize Constraints
+
+- Boxes cannot be resized smaller than the minimum box size
+- Boxes cannot extend beyond image boundaries
+- Opposite corners adjust automatically to maintain box integrity
+
+<Note>
+  Only the currently selected annotation shows resize handles. This prevents accidental modifications to other boxes.
+</Note>
+
+## Multi-Selecting Annotations
+
+You can select multiple annotations for batch operations:
+
+### In Canvas View
+
+- Hold **Ctrl** (Windows/Linux) or **Cmd** (Mac) and click on bounding boxes
+- Each click toggles the selection state of that annotation
+- Selected boxes have a stronger background color overlay
+
+### In Sidebar List
+
+- Click on annotation cards in the right panel under **Cuadros de la imagen** (Image Boxes)
+- Hold **Ctrl**/**Cmd** to toggle individual selections
+- Selected cards have a primary border and accent background
+
+### In CSV View
+
+- Click on rows in the CSV table
+- Hold **Ctrl**/**Cmd** to toggle row selections
+- Selected rows have a secondary background
+
+<Tip>
+  Multi-select is useful for copying multiple annotations at once or for visual comparison of similar objects.
+</Tip>
+
+## Copying and Pasting Annotations
+
+Copy annotations to reuse them on the same or different images:
+
+### Using Buttons
+
+1. Select one or more annotations
+2. Click **Copiar seleccionados** (Copy Selected) in the right panel
+3. Navigate to the same or different image
+4. Click **Pegar cuadros** (Paste Boxes)
+5. The annotations are pasted with a slight offset
+
+### Using Keyboard Shortcuts
+
+- **Ctrl+C** / **Cmd+C**: Copy selected annotations
+- **Ctrl+V** / **Cmd+V**: Paste copied annotations
+
+<Note>
+  Keyboard shortcuts only work when you're not typing in an input field, textarea, or other editable element.
+</Note>
+
+### Paste Behavior
+
+- Each paste creates new annotations with unique IDs
+- Pasted boxes are offset by 18 pixels to avoid exact overlap
+- Multiple consecutive pastes increase the offset incrementally
+- Pasted boxes are automatically selected after pasting
+- Boxes are clamped to stay within image boundaries
+
+## Deleting Annotations
+
+To remove an annotation:
+
+### From the Sidebar
+
+1. Find the annotation in the **Cuadros de la imagen** list in the right panel
+2. Click the **Eliminar** button on the annotation card
+3. The annotation is immediately removed
+
+### Deletion Effects
+
+- The annotation is permanently removed from the image
+- If the deleted annotation was selected, the selection is cleared
+- The annotation count for the image is updated
+- An info notification confirms the deletion
+
+<Warning>
+  Deleting annotations cannot be undone. Make sure to export your CSV regularly to preserve your work.
+</Warning>
+
+## Changing Annotation Labels
+
+You can change the label of an existing annotation without redrawing it:
+
+### In the Sidebar
+
+1. Find the annotation card in the right panel
+2. Click the dropdown menu showing the current label
+3. Select the new label from the list
+4. The annotation's color updates to match the new label
+
+### In CSV View
+
+1. Switch to **CSV** view in the panel selector
+2. Find the row for the annotation you want to change
+3. Click the dropdown in the `label_name` column
+4. Select the new label
+
+## Annotation Display
+
+Each annotation on the canvas shows:
+
+- **Border**: 2px solid border in the label's color
+- **Fill**: Semi-transparent overlay in the label's color
+- **Label tooltip**: On hover, shows the label name above the box
+- **Resize handles**: Four corner handles when selected (only for single selection)
+
+### In the Sidebar List
+
+Each annotation card displays:
+
+- **Color indicator**: Small circle in the label's color
+- **Box number**: Sequential number (e.g., "Cuadro #1")
+- **Dimensions**: Width x height in pixels
+- **Position**: X and Y coordinates
+- **Label selector**: Dropdown to change the label
+- **Delete button**: Remove the annotation
+
+## Annotation Workflow Best Practices
+
+1. **Set up labels first**: Create all labels you'll need before starting annotation
+2. **Use consistent labels**: Stick to your labeling scheme to avoid confusion
+3. **Work systematically**: Annotate all instances of one class before moving to another
+4. **Verify accuracy**: Check box positions and labels before moving to the next image
+5. **Save frequently**: Export CSV regularly to preserve your work
+6. **Use copy-paste**: For similar objects across images, copy existing annotations and adjust

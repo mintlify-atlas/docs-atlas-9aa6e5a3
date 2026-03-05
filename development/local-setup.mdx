@@ -1,0 +1,383 @@
+---
+title: Local Setup
+description: Complete guide to setting up labelWise for local development
+---
+
+This guide will walk you through setting up labelWise on your local machine for development.
+
+## Prerequisites
+
+### Node.js and npm
+
+labelWise requires Node.js to run the development server and build tools.
+
+**Required version:**
+- Node.js 18.0 or higher (20.x LTS recommended)
+- npm 9.0 or higher (comes with Node.js)
+
+**Check your current version:**
+
+```bash
+node --version
+npm --version
+```
+
+**Installation:**
+
+If you need to install or update Node.js:
+
+- **macOS/Linux:** Use [nvm](https://github.com/nvm-sh/nvm) (Node Version Manager)
+  ```bash
+  curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+  nvm install 20
+  nvm use 20
+  ```
+
+- **Windows:** Download from [nodejs.org](https://nodejs.org/) or use [nvm-windows](https://github.com/coreybutler/nvm-windows)
+
+### Git
+
+You'll need Git to clone the repository:
+
+```bash
+git --version
+```
+
+Install Git from [git-scm.com](https://git-scm.com/) if needed.
+
+## Getting the Code
+
+### Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/labelWise.git
+cd labelWise
+```
+
+If you're contributing, fork the repository first and clone your fork:
+
+```bash
+git clone https://github.com/YOUR_USERNAME/labelWise.git
+cd labelWise
+git remote add upstream https://github.com/ORIGINAL_OWNER/labelWise.git
+```
+
+## Installing Dependencies
+
+Install all required npm packages:
+
+```bash
+npm install
+```
+
+This will install:
+- **React 19** and **React DOM** - UI framework
+- **TypeScript** - Type checking
+- **Vite** - Build tool and dev server
+- **Tailwind CSS v4** - Styling
+- **ESLint** - Code linting
+- And all other dependencies from `package.json`
+
+<Note>
+  The installation process downloads packages from npm and may take 1-3 minutes depending on your internet connection.
+</Note>
+
+## Running the Development Server
+
+Start the Vite development server:
+
+```bash
+npm run dev
+```
+
+Expected output:
+
+```
+  VITE v7.3.1  ready in 423 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help
+```
+
+Open your browser and navigate to **http://localhost:5173**
+
+### Development Server Features
+
+- **Hot Module Replacement (HMR)** - Changes appear instantly without full page reload
+- **Fast Refresh** - React component state preserved during updates
+- **TypeScript checking** - Type errors shown in the browser and terminal
+- **Error overlay** - Build errors displayed directly in the browser
+
+## Available npm Scripts
+
+labelWise provides several npm scripts for development:
+
+### `npm run dev`
+
+Starts the Vite development server with HMR.
+
+- **Port:** 5173 (default)
+- **Use case:** Daily development work
+
+### `npm run build`
+
+Builds the application for production.
+
+```bash
+npm run build
+```
+
+This runs two steps:
+1. **TypeScript compilation** - `tsc -b` checks types across all TypeScript files
+2. **Vite build** - Bundles the application into `dist/` directory
+
+Output location: `dist/`
+
+### `npm run lint`
+
+Runs ESLint to check code quality.
+
+```bash
+npm run lint
+```
+
+Fix auto-fixable issues:
+
+```bash
+npm run lint -- --fix
+```
+
+### `npm run preview`
+
+Serves the production build locally for testing.
+
+```bash
+npm run build
+npm run preview
+```
+
+- **Port:** 4173 (default)
+- **Use case:** Testing the production build before deployment
+
+## Project File Structure
+
+After installation, your project structure should look like this:
+
+```
+labelWise/
+├── node_modules/           # Installed dependencies (git-ignored)
+├── dist/                   # Production build output (git-ignored)
+├── public/                 # Static assets served as-is
+│   └── labelWise-all.png
+├── src/
+│   ├── App.tsx            # Main application component
+│   ├── main.tsx           # Application entry point
+│   ├── index.css          # Global styles
+│   ├── features/
+│   │   └── labelwise/
+│   │       ├── components/
+│   │       ├── constants.ts
+│   │       ├── types.ts
+│   │       └── utils/
+│   ├── components/
+│   │   └── ui/            # Reusable UI components
+│   ├── lib/
+│   │   └── utils.ts       # Helper utilities
+│   └── assets/            # Images and static files
+├── package.json           # Dependencies and scripts
+├── package-lock.json      # Locked dependency versions
+├── tsconfig.json          # TypeScript configuration
+├── tsconfig.app.json      # App-specific TypeScript config
+├── vite.config.ts         # Vite bundler configuration
+├── eslint.config.js       # ESLint rules
+├── tailwind.config.js     # Tailwind CSS configuration
+└── README.md              # Project overview
+```
+
+## IDE Setup
+
+### VS Code (Recommended)
+
+labelWise works best with Visual Studio Code. Install these extensions:
+
+#### Essential Extensions
+
+1. **ESLint** (`dbaeumer.vscode-eslint`)
+   - Real-time linting in the editor
+   - Auto-fix on save
+
+2. **Prettier - Code formatter** (`esbenp.prettier-vscode`)
+   - Consistent code formatting
+   - Format on save
+
+3. **Tailwind CSS IntelliSense** (`bradlc.vscode-tailwindcss`)
+   - Autocomplete for Tailwind classes
+   - Hover previews of styles
+
+4. **TypeScript and JavaScript Language Features** (built-in)
+   - TypeScript IntelliSense
+   - Auto-imports
+
+#### Recommended Extensions
+
+5. **Error Lens** (`usernamehw.errorlens`)
+   - Inline error messages
+
+6. **Auto Rename Tag** (`formulahendry.auto-rename-tag`)
+   - Automatically rename paired HTML/JSX tags
+
+7. **Path Intellisense** (`christian-kohler.path-intellisense`)
+   - Autocomplete for file paths
+
+### VS Code Settings
+
+Create or update `.vscode/settings.json`:
+
+```json
+{
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "typescript.tsdk": "node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "tailwindCSS.experimental.classRegex": [
+    ["cva\\(([^)]*)\\)", "[\"'`]([^\"'`]*).*?[\"'`]"],
+    ["cn\\(([^)]*)\\)", "(?:'|\"|`)([^']*)(?:'|\"|`)"]
+  ]
+}
+```
+
+### Other IDEs
+
+labelWise should work with any modern IDE that supports TypeScript and React:
+
+- **WebStorm** - Excellent TypeScript support out of the box
+- **Sublime Text** - Install TypeScript and ESLint plugins
+- **Vim/Neovim** - Use CoC or built-in LSP with `typescript-language-server`
+
+## Debugging
+
+### Browser DevTools
+
+The development build includes full source maps for debugging:
+
+1. Open browser DevTools (F12)
+2. Go to the **Sources** tab
+3. Navigate to `webpack://` → `src/`
+4. Set breakpoints in your TypeScript files
+
+### VS Code Debugging
+
+Create `.vscode/launch.json` for debugging in VS Code:
+
+```json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Launch Chrome",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/src",
+      "sourceMapPathOverrides": {
+        "webpack:///./*": "${webRoot}/*"
+      }
+    }
+  ]
+}
+```
+
+Then press F5 to start debugging with breakpoints in VS Code.
+
+### Common Debugging Scenarios
+
+**React DevTools:**
+
+Install the React DevTools browser extension:
+- [Chrome](https://chrome.google.com/webstore/detail/react-developer-tools/fmkadmapgofadopljbjfkapdkoienihi)
+- [Firefox](https://addons.mozilla.org/en-US/firefox/addon/react-devtools/)
+
+Inspect component state, props, and hooks in the React tab of DevTools.
+
+**TypeScript Errors:**
+
+If you see TypeScript errors in the terminal:
+1. Check the error message and file location
+2. Run `npm run build` to see all errors at once
+3. Use your IDE's TypeScript features to see inline errors
+
+**Tailwind Classes Not Working:**
+
+1. Ensure `@tailwindcss/vite` plugin is loaded in `vite.config.ts`
+2. Check that `index.css` imports Tailwind directives
+3. Restart the dev server (`Ctrl+C`, then `npm run dev`)
+
+## Troubleshooting
+
+### Port Already in Use
+
+If port 5173 is already in use:
+
+```bash
+npm run dev -- --port 3000
+```
+
+Or kill the process using port 5173:
+
+```bash
+# macOS/Linux
+lsof -ti:5173 | xargs kill -9
+
+# Windows (PowerShell)
+Get-Process -Id (Get-NetTCPConnection -LocalPort 5173).OwningProcess | Stop-Process
+```
+
+### Module Not Found Errors
+
+If you see module import errors:
+
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### TypeScript Configuration Issues
+
+If path aliases (`@/`) don't work:
+
+1. Ensure `tsconfig.json` has the correct `baseUrl` and `paths`
+2. Restart your IDE to reload TypeScript configuration
+3. Run `npx tsc --showConfig` to verify configuration
+
+### Build Failures
+
+If `npm run build` fails:
+
+1. Check for TypeScript errors: `npx tsc --noEmit`
+2. Ensure all dependencies are installed: `npm install`
+3. Clear Vite cache: `rm -rf node_modules/.vite`
+4. Check Node.js version: `node --version` (must be 18+)
+
+## Next Steps
+
+Now that you have labelWise running locally:
+
+1. **Explore the code** - Start with `src/App.tsx` to understand the application flow
+2. **Read the architecture** - Check [Architecture](/development/architecture) for technical details
+3. **Make changes** - Try modifying the UI or adding a feature
+4. **Contribute** - See [Contributing](/development/contributing) for guidelines
+
+## Getting Help
+
+If you encounter issues not covered here:
+
+- Check [GitHub Issues](https://github.com/OWNER/labelWise/issues) for similar problems
+- Search the [Vite documentation](https://vitejs.dev)
+- Ask in the project's discussion forum or chat
+- Review the [Contributing](/development/contributing) guide for support channels
+
+Happy coding!

@@ -1,0 +1,458 @@
+---
+title: Troubleshooting
+description: Common issues and solutions when using labelWise
+---
+
+## CSV Import Issues
+
+### CSV Import Fails: Format Invalid
+
+<Accordion title="Error: 'Formato inválido' or missing columns">
+
+**Problem**: You see an error message about invalid format or required columns.
+
+**Cause**: The CSV is missing one or more required columns.
+
+**Solution**:
+
+1. Verify your CSV has **all required columns** in the header row:
+   ```csv
+   label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+   ```
+
+2. Column names are case-insensitive but must match exactly:
+   - ✅ `label_name`, `Label_Name`, `LABEL_NAME` all work
+   - ❌ `label`, `labelname`, `name` do not work
+
+3. Check for typos in column names:
+   - ✅ `bbox_width` (underscore)
+   - ❌ `bbox-width` (hyphen)
+   - ❌ `bbox width` (space)
+
+4. Ensure there are no extra spaces before/after column names
+
+5. Open the CSV in a text editor to verify the exact header line
+
+</Accordion>
+
+### No Annotations Imported
+
+<Accordion title="CSV imports but zero annotations appear">
+
+**Problem**: CSV import succeeds with "0 imagen(es)" matched or "0 anotaciones" imported.
+
+**Cause**: The `image_name` values in your CSV don't match any loaded image filenames.
+
+**Solution**:
+
+1. **Load images first** before importing CSV
+
+2. Check exact filename matching:
+   - Image loaded: `photo.jpg`
+   - CSV must have: `photo.jpg`
+   - ❌ Won't match: `photo.JPG`, `photo.jpeg`, `Photo.jpg`, `photo`
+
+3. Verify filenames in your CSV:
+   ```csv
+   label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+   "car",100,200,50,50,"street_photo.jpg",1920,1080
+   ```
+
+4. Check the image list in labelWise:
+   - Open the left sidebar
+   - Note the exact filename shown (including extension)
+   - Compare with your CSV's `image_name` column
+
+5. Common mismatches:
+   - Missing file extension (`.jpg`, `.png`)
+   - Incorrect extension (`.jpeg` vs `.jpg`)
+   - Case sensitivity (`Image.jpg` vs `image.jpg`)
+   - Extra spaces (`photo .jpg` vs `photo.jpg`)
+
+</Accordion>
+
+### Invalid Rows Skipped
+
+<Accordion title="Some rows imported, others skipped">
+
+**Problem**: Import reports fewer annotations than rows in your CSV.
+
+**Cause**: Some rows failed validation checks.
+
+**Validation rules** (row is skipped if any fail):
+- `label_name` must not be empty
+- `bbox_x`, `bbox_y`, `bbox_width`, `bbox_height` must be valid numbers
+- `bbox_width` must be greater than 0
+- `bbox_height` must be greater than 0
+- `image_name` must not be empty
+
+**Solution**:
+
+1. Check for empty cells:
+   ```csv
+   "car",100,200,,,"photo.jpg",1920,1080  ❌ Missing width/height
+   "",100,200,50,50,"photo.jpg",1920,1080  ❌ Empty label
+   "car",100,200,50,50,"",1920,1080        ❌ Empty image_name
+   ```
+
+2. Verify numeric values:
+   ```csv
+   "car",abc,200,50,50,"photo.jpg",1920,1080  ❌ Non-numeric x coordinate
+   "car",100,200,0,50,"photo.jpg",1920,1080   ❌ Zero width
+   "car",100,200,-10,50,"photo.jpg",1920,1080 ❌ Negative width
+   ```
+
+3. Use Excel or a CSV validator to check for:
+   - Hidden characters
+   - Extra commas creating empty columns
+   - Line break issues
+
+4. Export a CSV from labelWise to see the correct format
+
+</Accordion>
+
+### CSV Characters Corrupted
+
+<Accordion title="Label names or filenames appear garbled">
+
+**Problem**: Special characters or non-English text appears corrupted after import.
+
+**Cause**: CSV file encoding is not UTF-8.
+
+**Solution**:
+
+1. Save your CSV as UTF-8:
+   - **Excel**: File → Save As → CSV UTF-8 (not regular CSV)
+   - **Google Sheets**: File → Download → CSV (automatically UTF-8)
+   - **LibreOffice**: Save As → Text CSV → Character set: Unicode (UTF-8)
+
+2. For existing CSV files, convert encoding:
+   - Open in Notepad++ → Encoding → Convert to UTF-8
+   - Or use command line: `iconv -f ISO-8859-1 -t UTF-8 input.csv > output.csv`
+
+</Accordion>
+
+## Image Loading Issues
+
+### Images Not Loading
+
+<Accordion title="Clicked 'Cargar imágenes' but nothing appears">
+
+**Problem**: No images appear in the list after selecting files.
+
+**Cause**: Selected files are not recognized as images.
+
+**Solution**:
+
+1. Check file types. Supported formats:
+   - JPEG (`.jpg`, `.jpeg`)
+   - PNG (`.png`)
+   - WebP (`.webp`)
+   - GIF (`.gif`)
+   - BMP (`.bmp`)
+   - SVG (`.svg`)
+
+2. Look for the warning: "Sin imágenes válidas"
+   - This means no files had `image/*` MIME type
+
+3. Verify file extensions match actual format:
+   - A PDF renamed to `.jpg` won't load
+   - Use `file` command on Linux: `file photo.jpg`
+
+4. Try re-saving images in a standard format
+
+5. Check browser console (F12) for error messages
+
+</Accordion>
+
+### Image Shows But Won't Load
+
+<Accordion title="Image appears in list but canvas shows blank">
+
+**Problem**: Image thumbnail shows in sidebar, but canvas is empty or shows broken image icon.
+
+**Cause**: File is too large, corrupted, or unsupported format despite extension.
+
+**Solution**:
+
+1. Check image file size:
+   - Recommended: < 10 MB per image
+   - Maximum browser limit: varies, typically ~25 MB
+   - Compress or resize oversized images
+
+2. Verify image is not corrupted:
+   - Open in image viewer/editor outside labelWise
+   - If it won't open elsewhere, it's corrupted
+   - Re-export from original source
+
+3. Try converting to standard JPEG or PNG
+
+4. Check browser console for error messages
+
+</Accordion>
+
+## Annotation Issues
+
+### Can't Draw Annotations
+
+<Accordion title="Click and drag on canvas but nothing appears">
+
+**Problem**: Attempting to draw but no bounding box appears.
+
+**Possible causes and solutions**:
+
+1. **No active label selected**
+   - Solution: Select a label from the right sidebar
+   - Look for a highlighted label button
+
+2. **No labels created**
+   - Solution: Create at least one label first
+   - Use the label input field or bulk textarea
+
+3. **In pan mode instead of draw mode**
+   - Solution: Click the **Dibujar** button (not **Mover**)
+   - Draw mode shows crosshair cursor
+   - Pan mode shows grab cursor
+
+4. **Box too small**
+   - Minimum size is 10×10 pixels (`MIN_BOX_SIZE`)
+   - Solution: Draw a larger box
+   - Zoom in for easier drawing of small objects
+
+5. **Currently moving/resizing another annotation**
+   - Solution: Finish the current transformation first
+   - Click elsewhere or release mouse button
+
+</Accordion>
+
+### Annotations Not Visible
+
+<Accordion title="Annotations exist but don't appear on canvas">
+
+**Problem**: Annotations show in CSV view but not on canvas, or appear off-screen.
+
+**Possible causes**:
+
+1. **Annotations outside image bounds**
+   - Check CSV view for coordinates:
+   - If `bbox_x` or `bbox_y` > image dimensions, box is off-screen
+   - If `bbox_x + bbox_width` > image width, box extends beyond edge
+
+2. **Zoomed in too much**
+   - Annotations might be outside visible viewport
+   - Solution: Click **Reset** to return to 100% zoom
+   - Use **Mover** mode to pan around
+
+3. **Very small annotations**
+   - Box might be too small to see at current zoom
+   - Solution: Zoom in or check CSV view for dimensions
+
+4. **Transparent or matching color**
+   - Label colors are auto-generated
+   - If color blends with image, hard to see
+   - Solution: Hover over canvas; label name tooltip appears
+
+</Accordion>
+
+### Can't Select or Move Annotation
+
+<Accordion title="Clicking annotation doesn't select it">
+
+**Problem**: Cannot select, move, or resize an annotation.
+
+**Solutions**:
+
+1. **Make sure you're in Draw mode**
+   - Pan mode disables annotation interaction
+   - Click **Dibujar** button
+
+2. **Click directly on the annotation box**
+   - Click the border or interior
+   - Don't click outside the box
+
+3. **Try clicking from CSV view**
+   - Switch to CSV view
+   - Click the row corresponding to the annotation
+   - This selects it even if canvas interaction isn't working
+
+4. **Check if another transformation is active**
+   - If you're mid-drag or mid-resize, finish that first
+   - Click elsewhere or press Escape
+
+</Accordion>
+
+## Copy/Paste Issues
+
+### Copy/Paste Not Working
+
+<Accordion title="Ctrl/Cmd + C or V doesn't work">
+
+**Problem**: Keyboard shortcuts for copy/paste don't respond.
+
+**Possible causes**:
+
+1. **No annotation selected**
+   - Solution: Click an annotation to select it first
+   - Selected annotations have stronger border highlight
+
+2. **Focused on input field**
+   - Keyboard shortcuts disabled when typing
+   - Solution: Click on the canvas area first
+   - Don't have cursor in label input or textarea
+
+3. **No image loaded**
+   - Can't paste without a current image
+   - Solution: Select an image from the list
+
+4. **Nothing copied yet**
+   - Must copy before you can paste
+   - Solution: Select annotation, press Ctrl/Cmd + C first
+
+5. **Browser intercepting shortcut**
+   - Some browsers or extensions override Ctrl/Cmd + C/V
+   - Solution: Check browser settings or disable extensions
+
+</Accordion>
+
+### Pasted Annotation Not Visible
+
+<Accordion title="Paste succeeds but can't see the result">
+
+**Problem**: Notification says "Cuadros pegados" but annotation doesn't appear.
+
+**Cause**: Pasted annotation is off-screen or exactly overlapping the original.
+
+**Solution**:
+
+1. Check for 18px offset:
+   - First paste: +18px from original
+   - Second paste: +36px from original
+   - May be too small to notice
+
+2. Try multiple pastes:
+   - Press Ctrl/Cmd + V several times
+   - Offset increases each time
+   - Eventually it will be clearly separated
+
+3. Check CSV view:
+   - Switch to CSV view
+   - New rows should appear
+   - Verify coordinates
+
+4. Coordinates clamped to image bounds:
+   - If original annotation is at edge, paste might not move
+   - Pasted x/y clamped to `[0, imageWidth - boxWidth]`
+
+</Accordion>
+
+## Performance Issues
+
+### labelWise Slow or Laggy
+
+<Accordion title="Canvas drawing or panning is sluggish">
+
+**Problem**: Interface is slow, especially when drawing or moving annotations.
+
+**Causes and solutions**:
+
+1. **Too many images loaded**
+   - Each image is held in browser memory
+   - Solution: Remove images after annotating (click X button)
+   - Work in batches of 50-100 images
+
+2. **Very large images**
+   - High-resolution images (>4K) require more rendering
+   - Solution: Resize images to 2048px max dimension before loading
+   - Or use lower zoom levels
+
+3. **Browser memory full**
+   - Solution: Close unused tabs
+   - Restart browser
+   - Clear browser cache
+
+4. **Weak hardware**
+   - Solution: Use a more powerful device
+   - Close other applications
+   - Use Chrome or Edge (better performance than Firefox/Safari)
+
+</Accordion>
+
+### Browser Crashes or Freezes
+
+<Accordion title="Browser becomes unresponsive">
+
+**Problem**: Browser tab freezes or crashes while using labelWise.
+
+**Solution**:
+
+1. **Reduce batch size**
+   - Load fewer images at once (max 50)
+
+2. **Reduce image sizes**
+   - Use images under 2000×2000 pixels
+   - Compress images before loading
+
+3. **Export and reload**
+   - Export CSV frequently
+   - Refresh page to clear memory
+   - Re-import CSV to continue
+
+4. **Upgrade browser**
+   - Use latest version of Chrome or Edge
+   - Update your operating system
+
+5. **Check system resources**
+   - Close memory-heavy applications
+   - Restart computer if necessary
+
+</Accordion>
+
+## Data Loss Prevention
+
+### Lost All Annotations After Refresh
+
+<Accordion title="Refreshed page and everything is gone">
+
+**Problem**: All images and annotations disappeared after closing or refreshing.
+
+**Cause**: labelWise stores everything in browser memory (not saved to disk).
+
+**Prevention**:
+
+1. **Export CSV frequently**
+   - After every 10-20 images
+   - Before closing browser
+   - Before taking a break
+
+2. **Rename exports immediately**
+   - Default filename: `annotations-YYYY-MM-DD.csv`
+   - Add batch numbers: `annotations-batch1.csv`
+
+3. **Keep image files organized**
+   - Store source images safely
+   - Can always reload and re-import CSV
+
+**Recovery**:
+
+Unfortunately, there is no recovery if you didn't export:
+- No undo feature
+- No auto-save
+- No server-side backup
+
+You must re-annotate from scratch.
+
+</Accordion>
+
+## Still Having Issues?
+
+If your problem isn't listed here:
+
+1. Check the browser console (F12 → Console tab) for error messages
+2. Try in a different browser (Chrome recommended)
+3. Try with a small test dataset (2-3 images, simple CSV)
+4. Open an issue on the labelWise GitHub repository with:
+   - Browser name and version
+   - Steps to reproduce
+   - Sample CSV (if applicable)
+   - Console error messages
+   - Screenshots

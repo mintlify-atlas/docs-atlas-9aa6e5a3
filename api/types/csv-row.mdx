@@ -1,0 +1,124 @@
+---
+title: "CsvRow"
+description: "Type representing a single row in the CSV table view"
+---
+
+## Overview
+
+The `CsvRow` type represents a flattened view of an annotation combined with its parent image metadata. This format is used for the CSV table view and CSV export functionality.
+
+## Type Definition
+
+```typescript
+export type CsvRow = {
+  imageId: string
+  annotationId: string
+  label: string
+  x: number
+  y: number
+  width: number
+  height: number
+  imageName: string
+  imageWidth: number | null
+  imageHeight: number | null
+}
+```
+
+## Properties
+
+<ParamField path="imageId" type="string" required>
+  The unique identifier of the parent image. Used to navigate back to the image when clicking a row.
+</ParamField>
+
+<ParamField path="annotationId" type="string" required>
+  The unique identifier of the annotation. Used to select/highlight the annotation.
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  The label/class name of the annotation.
+</ParamField>
+
+<ParamField path="x" type="number" required>
+  The x-coordinate of the annotation's top-left corner in pixels.
+</ParamField>
+
+<ParamField path="y" type="number" required>
+  The y-coordinate of the annotation's top-left corner in pixels.
+</ParamField>
+
+<ParamField path="width" type="number" required>
+  The width of the annotation bounding box in pixels.
+</ParamField>
+
+<ParamField path="height" type="number" required>
+  The height of the annotation bounding box in pixels.
+</ParamField>
+
+<ParamField path="imageName" type="string" required>
+  The filename of the parent image (from `image.file.name`).
+</ParamField>
+
+<ParamField path="imageWidth" type="number | null" required>
+  The natural width of the parent image in pixels, or `null` if not yet loaded.
+</ParamField>
+
+<ParamField path="imageHeight" type="number | null" required>
+  The natural height of the parent image in pixels, or `null` if not yet loaded.
+</ParamField>
+
+## Usage Example
+
+Generating CSV rows from the images array:
+
+```typescript
+const csvRows = useMemo<CsvRow[]>(
+  () =>
+    images.flatMap((image) =>
+      image.annotations.map((annotation) => ({
+        imageId: image.id,
+        annotationId: annotation.id,
+        label: annotation.label,
+        x: annotation.x,
+        y: annotation.y,
+        width: annotation.width,
+        height: annotation.height,
+        imageName: image.file.name,
+        imageWidth: image.width ?? null,
+        imageHeight: image.height ?? null,
+      })),
+    ),
+  [images],
+)
+```
+
+Updating an annotation from the CSV table:
+
+```typescript
+const updateAnnotationFromCsv = (
+  row: CsvRow,
+  field: "label" | "x" | "y" | "width" | "height",
+  value: string,
+) => {
+  updateAnnotationByImage(row.imageId, row.annotationId, (annotation, image) => {
+    if (field === "label") {
+      const next = value.trim().toLowerCase()
+      return { ...annotation, label: next || annotation.label }
+    }
+    // ... numeric field updates
+  })
+}
+```
+
+## CSV Export Format
+
+When exporting to CSV, the data is formatted as:
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+"cat",120,85,340,280,"photo.jpg",1920,1080
+```
+
+## Related Types
+
+- [AnnotationBox](/api/types/annotation-box) - Source annotation data
+- [ImageItem](/api/types/image-item) - Source image data

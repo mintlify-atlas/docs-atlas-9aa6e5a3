@@ -1,0 +1,77 @@
+---
+title: "AnnotationBox"
+description: "Type representing a single bounding box annotation"
+---
+
+## Overview
+
+The `AnnotationBox` type represents a single bounding box annotation on an image. Each annotation box has a unique identifier, a label, and position/dimension properties.
+
+## Type Definition
+
+```typescript
+export type AnnotationBox = {
+  id: string
+  label: string
+  x: number
+  y: number
+  width: number
+  height: number
+}
+```
+
+## Properties
+
+<ParamField path="id" type="string" required>
+  Unique identifier for the annotation box. Generated using `crypto.randomUUID()`.
+</ParamField>
+
+<ParamField path="label" type="string" required>
+  The label/class name assigned to this annotation (e.g., "cat", "dog", "car").
+</ParamField>
+
+<ParamField path="x" type="number" required>
+  The x-coordinate of the top-left corner of the bounding box in pixels.
+</ParamField>
+
+<ParamField path="y" type="number" required>
+  The y-coordinate of the top-left corner of the bounding box in pixels.
+</ParamField>
+
+<ParamField path="width" type="number" required>
+  The width of the bounding box in pixels.
+</ParamField>
+
+<ParamField path="height" type="number" required>
+  The height of the bounding box in pixels.
+</ParamField>
+
+## Usage Example
+
+Creating a new annotation box when the user finishes drawing:
+
+```typescript
+const annotation: AnnotationBox = {
+  id: crypto.randomUUID(),
+  label: activeLabel,
+  x,
+  y,
+  width,
+  height,
+}
+
+setImages((previous) =>
+  previous.map((image) => {
+    if (image.id !== currentImage.id) return image
+    return {
+      ...image,
+      annotations: [...image.annotations, annotation],
+    }
+  }),
+)
+```
+
+## Related Types
+
+- [ImageItem](/api/types/image-item) - Contains an array of `AnnotationBox` objects
+- [CsvRow](/api/types/csv-row) - Flattened representation for CSV export

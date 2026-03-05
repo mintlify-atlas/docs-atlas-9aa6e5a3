@@ -1,0 +1,103 @@
+---
+title: Introduction
+description: Welcome to labelWise - an open-source web application for image annotation with bounding boxes and CSV export/import
+---
+
+## What is labelWise?
+
+labelWise is an open-source web application designed for annotating images with bounding boxes. It provides a streamlined workflow for creating training datasets for machine learning models, with powerful CSV import/export capabilities for easy data management.
+
+Built with modern web technologies, labelWise runs entirely in your browser - no server required. All your images and annotations stay on your local machine, ensuring privacy and fast performance.
+
+<Note>
+  **Live Demo**: Try labelWise at [https://label-wise-ashen.vercel.app/](https://label-wise-ashen.vercel.app/)
+</Note>
+
+## Key Features
+
+labelWise provides a comprehensive set of tools for efficient image annotation:
+
+<CardGroup cols={2}>
+  <Card title="Multi-Image Upload" icon="images">
+    Upload multiple images at once and manage them in a unified interface. Switch between images seamlessly while annotating.
+  </Card>
+  
+  <Card title="Canvas Annotation" icon="draw-square">
+    Draw, move, resize, and manage bounding boxes directly on an HTML5 canvas with real-time visual feedback.
+  </Card>
+  
+  <Card title="CSV Import/Export" icon="file-csv">
+    Export annotations in a structured CSV format with schema: `label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height`. Import existing datasets mapped by image name.
+  </Card>
+  
+  <Card title="Advanced Editing" icon="edit">
+    Multi-select annotations with `Ctrl/Cmd + click`, copy/paste bounding boxes, and edit values directly in CSV table view.
+  </Card>
+  
+  <Card title="Zoom & Pan Controls" icon="magnifying-glass">
+    Zoom in for precise annotation (up to 300%) and pan across large images with dedicated controls.
+  </Card>
+  
+  <Card title="Grid Guide Overlay" icon="grid">
+    Toggle a grid overlay for easier alignment and consistent annotation placement.
+  </Card>
+</CardGroup>
+
+## Use Cases
+
+labelWise is perfect for:
+
+- **Machine Learning Training Data**: Create labeled datasets for object detection models (YOLO, Faster R-CNN, etc.)
+- **Computer Vision Research**: Annotate images for academic research and experimentation
+- **Dataset Management**: Import, review, and refine existing annotation datasets
+- **Team Collaboration**: Export annotations as CSV for sharing with team members
+- **Quality Control**: Use the CSV table view to review and correct annotation coordinates
+
+## Tech Stack
+
+labelWise is built with cutting-edge web technologies:
+
+```typescript
+// Core Technologies
+React 19          // Latest React with improved performance
+TypeScript        // Type-safe development
+Vite             // Fast build tool and dev server
+
+// UI & Styling
+Tailwind CSS v4  // Utility-first CSS framework
+shadcn/ui        // Beautiful, accessible components
+Sileo            // Toast notifications
+lucide-react     // Icon library
+```
+
+<Tip>
+  All dependencies are listed in `package.json` in the source repository. The app uses Vite for blazing-fast hot module replacement during development.
+</Tip>
+
+## CSV Format
+
+labelWise uses a standardized CSV schema for maximum compatibility:
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+car,2660,2640,757,241,image_001.png,3613,10821
+person,2660,2904,757,217,image_001.png,3613,10821
+```
+
+- **label_name**: The class/category of the annotated object
+- **bbox_x, bbox_y**: Top-left corner coordinates of the bounding box
+- **bbox_width, bbox_height**: Dimensions of the bounding box
+- **image_name**: Filename of the source image
+- **image_width, image_height**: Natural dimensions of the source image
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" icon="rocket" href="/quickstart">
+    Get started with labelWise in 5 minutes
+  </Card>
+  
+  <Card title="Installation" icon="download" href="/installation">
+    Detailed installation and deployment guide
+  </Card>
+</CardGroup>

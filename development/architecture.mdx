@@ -1,0 +1,209 @@
+---
+title: Architecture
+description: Technical overview of the labelWise codebase
+---
+
+## Tech Stack
+
+labelWise is built with modern web technologies focused on performance and developer experience:
+
+- **React 19** - Latest React with concurrent features
+- **TypeScript 5.9** - Type-safe development with strict mode enabled
+- **Vite 7** - Fast build tool and dev server
+- **Tailwind CSS v4** - Utility-first CSS with the latest alpha version
+- **shadcn/ui** - Reusable component patterns built on Radix UI primitives
+- **Sileo** - Toast notification library
+
+### Supporting Libraries
+
+- **lucide-react** - Icon system
+- **class-variance-authority** - Component variant management
+- **clsx** & **tailwind-merge** - Conditional className utilities
+
+## Project Structure
+
+```
+src/
+├── App.tsx                          # Main application component
+├── main.tsx                         # Application entry point
+├── index.css                        # Global styles and Tailwind imports
+├── features/
+│   └── labelwise/
+│       ├── components/
+│       │   └── lw-select.tsx       # Custom select component
+│       ├── constants.ts             # Default labels, grid size, min box size
+│       ├── types.ts                 # TypeScript type definitions
+│       └── utils/
+│           ├── color.ts             # Label color generation utilities
+│           └── csv.ts               # CSV parsing logic
+├── components/
+│   └── ui/
+│       ├── badge.tsx                # Badge component
+│       ├── button.tsx               # Button component with variants
+│       ├── card.tsx                 # Card layout component
+│       ├── input.tsx                # Text input component
+│       └── textarea.tsx             # Textarea component
+├── lib/
+│   └── utils.ts                     # Utility functions (cn helper)
+└── assets/                          # Static assets
+
+Configuration Files:
+├── vite.config.ts                   # Vite bundler configuration
+├── tsconfig.json                    # TypeScript project references
+├── tsconfig.app.json                # App-specific TypeScript config
+├── tsconfig.node.json               # Node environment TypeScript config
+├── eslint.config.js                 # ESLint configuration
+├── tailwind.config.js               # Tailwind CSS configuration
+└── package.json                     # Dependencies and scripts
+```
+
+## Architecture Patterns
+
+### Single Component Architecture
+
+labelWise uses a **monolithic component approach** with all application logic consolidated in `src/App.tsx`. This design choice offers:
+
+- **Simplicity** - Easy to understand the entire application flow in one file
+- **Direct state access** - No prop drilling or complex state management
+- **Rapid iteration** - Changes to features don't require coordination across multiple files
+
+### State Management
+
+The application uses **React's built-in hooks** for state management:
+
+- `useState` for local component state
+- `useRef` for DOM references and mutable values that don't trigger re-renders
+- `useMemo` for expensive computations (e.g., CSV row generation)
+- `useEffect` for side effects and lifecycle management
+
+**Key State Categories:**
+
+1. **Image Management** - Images array with annotations, current image selection
+2. **Drawing State** - Draw start/current points, pan position, zoom level
+3. **Annotation State** - Selected annotations, transform operations, clipboard
+4. **UI State** - Panel view (canvas/CSV), interaction mode (draw/pan), grid visibility
+5. **Label Management** - Available labels, active label, label colors
+
+### Feature Organization
+
+The `features/labelwise/` directory contains domain-specific code:
+
+- **Components** - Feature-specific UI components (lw-select)
+- **Types** - TypeScript interfaces for annotations, images, and transforms
+- **Utils** - Pure functions for CSV parsing and color generation
+- **Constants** - Configuration values (default labels, grid size)
+
+### Canvas Rendering Strategy
+
+The canvas uses **HTML/CSS positioning** instead of a canvas element:
+
+- Images rendered as `<img>` with absolute positioning
+- Annotations rendered as positioned `<button>` elements
+- Percentages used for responsive scaling
+- Grid overlay via CSS `background-image` gradients
+
+This approach provides:
+- Native browser event handling
+- Easy styling with CSS
+- Accessibility support (focusable annotations)
+- No need for complex canvas hit detection
+
+### CSV Export/Import Contract
+
+The application maintains a **strict CSV schema**:
+
+```csv
+label_name,bbox_x,bbox_y,bbox_width,bbox_height,image_name,image_width,image_height
+```
+
+- **Export** - Generates CSV from in-memory annotations
+- **Import** - Parses CSV and matches by `image_name`
+- **Validation** - Ensures numeric values and positive dimensions
+- **Preservation** - Image dimensions stored in CSV for reference
+
+## Key Architectural Decisions
+
+### TypeScript Configuration
+
+The project uses strict TypeScript settings (`tsconfig.app.json:20`):
+
+```json
+{
+  "strict": true,
+  "noUnusedLocals": true,
+  "noUnusedParameters": true,
+  "noFallthroughCasesInSwitch": true
+}
+```
+
+Path aliases configured for clean imports:
+```json
+{
+  "baseUrl": ".",
+  "paths": {
+    "@/*": ["./src/*"]
+  }
+}
+```
+
+### Build Configuration
+
+Vite configuration (`vite.config.ts:7-14`):
+
+```typescript
+export default defineConfig({
+  plugins: [react(), tailwindcss()],
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
+});
+```
+
+- **React plugin** - Fast refresh and JSX transformation
+- **Tailwind plugin** - Native Tailwind v4 integration
+- **Path aliases** - Matches TypeScript configuration
+
+### Component Library Strategy
+
+Uses **shadcn/ui patterns** rather than a traditional component library:
+
+- Components are copied into the project (not installed as dependencies)
+- Full control over component implementation
+- No version lock-in or breaking changes from external packages
+- Tailwind-based styling with variant support via `class-variance-authority`
+
+## Performance Considerations
+
+### Image Memory Management
+
+- Object URLs created with `URL.createObjectURL()` for efficient blob handling
+- Cleanup in `useEffect` unmount to prevent memory leaks (`src/App.tsx:148-154`)
+- Natural dimensions stored after image load to avoid recalculation
+
+### Render Optimization
+
+- `useMemo` for CSV row generation to avoid recalculating on every render
+- Separate viewport size state to prevent unnecessary re-renders
+- Transform state isolated to prevent full re-renders during drag operations
+
+### Event Handling
+
+- Global mouse event listeners for drag operations (attached/removed dynamically)
+- Pointer capture pattern for smooth drag interactions
+- Debounced viewport measurements with `ResizeObserver`
+
+## Future Scalability
+
+The current architecture is optimized for:
+- **Small to medium datasets** (dozens to hundreds of images)
+- **Single-user workflows** (local browser storage)
+- **Rapid prototyping and feature additions**
+
+For scaling beyond these constraints, consider:
+- State management library (Zustand, Redux Toolkit)
+- Virtual scrolling for large image lists
+- Web Worker for CSV parsing/generation
+- IndexedDB for persistent storage
+- Server-side annotation storage and collaboration features

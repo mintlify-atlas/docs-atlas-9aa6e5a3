@@ -1,0 +1,109 @@
+---
+title: "ImageItem"
+description: "Type representing an image and its annotations in the dataset"
+---
+
+## Overview
+
+The `ImageItem` type represents a single image in the annotation dataset. It contains the original file, a blob URL for display, all associated annotations, and the image dimensions.
+
+## Type Definition
+
+```typescript
+export type ImageItem = {
+  id: string
+  file: File
+  url: string
+  annotations: AnnotationBox[]
+  width?: number
+  height?: number
+}
+```
+
+## Properties
+
+<ParamField path="id" type="string" required>
+  Unique identifier for the image. Generated using a combination of filename, last modified timestamp, and a UUID:
+  ```typescript
+  `${file.name}-${file.lastModified}-${crypto.randomUUID()}`
+  ```
+</ParamField>
+
+<ParamField path="file" type="File" required>
+  The original File object from the user's file input. Contains the actual image data.
+</ParamField>
+
+<ParamField path="url" type="string" required>
+  A blob URL created using `URL.createObjectURL(file)` for displaying the image in the browser. Must be revoked when the image is removed.
+</ParamField>
+
+<ParamField path="annotations" type="AnnotationBox[]" required>
+  Array of all bounding box annotations associated with this image.
+</ParamField>
+
+<ParamField path="width" type="number" optional>
+  The natural width of the image in pixels. Populated after the image loads.
+</ParamField>
+
+<ParamField path="height" type="number" optional>
+  The natural height of the image in pixels. Populated after the image loads.
+</ParamField>
+
+## Usage Example
+
+Creating new image items when files are selected:
+
+```typescript
+const next = onlyImages.map((file) => ({
+  id: `${file.name}-${file.lastModified}-${crypto.randomUUID()}`,
+  file,
+  url: URL.createObjectURL(file),
+  annotations: [],
+}))
+
+setImages((previous) => {
+  const updated = [...previous, ...next]
+  if (!currentId && updated.length > 0) setCurrentId(updated[0].id)
+  return updated
+})
+```
+
+Updating dimensions when the image loads:
+
+```typescript
+onLoad={(event) => {
+  const imageWidth = event.currentTarget.naturalWidth
+  const imageHeight = event.currentTarget.naturalHeight
+
+  setImages((previous) =>
+    previous.map((image) => {
+      if (image.id !== currentImage.id) return image
+      if (image.width === imageWidth && image.height === imageHeight) return image
+      return {
+        ...image,
+        width: imageWidth,
+        height: imageHeight,
+      }
+    }),
+  )
+}}
+```
+
+## Memory Management
+
+Blob URLs created with `URL.createObjectURL()` must be manually revoked to prevent memory leaks:
+
+```typescript
+useEffect(() => {
+  return () => {
+    for (const image of imagesRef.current) {
+      URL.revokeObjectURL(image.url)
+    }
+  }
+}, [])
+```
+
+## Related Types
+
+- [AnnotationBox](/api/types/annotation-box) - Individual annotations within the image
+- [CsvRow](/api/types/csv-row) - Flattened format combining image and annotation data

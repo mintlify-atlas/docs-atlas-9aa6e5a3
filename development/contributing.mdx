@@ -1,0 +1,262 @@
+---
+title: Contributing
+description: Guidelines for contributing to labelWise
+---
+
+Thank you for your interest in contributing to labelWise! This guide will help you get started with submitting issues, pull requests, and maintaining code quality.
+
+## Ground Rules
+
+Before contributing, please keep these principles in mind:
+
+- **Keep changes focused and small** - Single-purpose PRs are easier to review and merge
+- **Prefer clear, typed, and testable code** - Use TypeScript features and write self-documenting code
+- **Do not break the CSV import/export contract** - The CSV schema is a core feature that users depend on
+
+## Development Setup
+
+### 1. Fork and Clone
+
+```bash
+# Fork the repository on GitHub, then clone your fork
+git clone https://github.com/YOUR_USERNAME/labelWise.git
+cd labelWise
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+```
+
+The project uses npm as the package manager. All dependencies will be installed from `package.json`.
+
+### 3. Start Development Server
+
+```bash
+npm run dev
+```
+
+This starts the Vite dev server at `http://localhost:5173` with hot module replacement (HMR) enabled.
+
+### 4. Validate Build
+
+Before pushing changes, always ensure the build passes:
+
+```bash
+npm run build
+```
+
+This runs TypeScript compilation (`tsc -b`) followed by Vite's production build.
+
+## Branching Strategy
+
+### Create Feature Branches
+
+Always create a new branch from `main` for your changes:
+
+```bash
+git checkout main
+git pull origin main
+git checkout -b feat/your-feature-name
+```
+
+### Branch Naming Conventions
+
+Use descriptive branch names with a category prefix:
+
+- `feat/` - New features (e.g., `feat/grid-snapping`)
+- `fix/` - Bug fixes (e.g., `fix/canvas-resize-glitch`)
+- `docs/` - Documentation updates (e.g., `docs/improve-readme`)
+- `refactor/` - Code refactoring (e.g., `refactor/extract-canvas-logic`)
+- `chore/` - Tooling and configuration (e.g., `chore/update-deps`)
+
+## Code Style
+
+### TypeScript Guidelines
+
+- **Use strict typing** - Avoid `any`; use proper types from `src/features/labelwise/types.ts`
+- **Prefer explicit return types** - Document function contracts
+- **Use const assertions** - For readonly arrays and objects
+- **Enable all strict checks** - The project uses strict mode in `tsconfig.app.json`
+
+### ESLint Configuration
+
+The project uses a flat ESLint config (`eslint.config.js`) with:
+
+- `@eslint/js` recommended rules
+- `typescript-eslint` recommended rules
+- `eslint-plugin-react-hooks` for React Hooks validation
+- `eslint-plugin-react-refresh` for fast refresh compatibility
+
+Run the linter:
+
+```bash
+npm run lint
+```
+
+Fix auto-fixable issues:
+
+```bash
+npm run lint -- --fix
+```
+
+### React Best Practices
+
+- **Use functional components** - No class components
+- **Follow Hooks rules** - Hooks must be called at the top level
+- **Memoize expensive computations** - Use `useMemo` for derived state
+- **Clean up side effects** - Return cleanup functions from `useEffect`
+- **Avoid inline function definitions** - Extract event handlers when they grow complex
+
+### Styling Guidelines
+
+The project uses **Tailwind CSS v4** with utility classes:
+
+- Use Tailwind utilities instead of custom CSS when possible
+- Follow mobile-first responsive design (use `md:`, `lg:` breakpoints)
+- Use CSS variables for theme colors (`bg-background`, `text-foreground`)
+- Keep utility classes in readable order: layout → spacing → colors → typography
+
+## Commit Message Format
+
+Use clear, concise commit messages following this pattern:
+
+```
+<type>: <description>
+
+[optional body]
+```
+
+### Types
+
+- `feat` - New feature
+- `fix` - Bug fix
+- `docs` - Documentation changes
+- `refactor` - Code refactoring (no functional changes)
+- `style` - Formatting, missing semicolons, etc.
+- `test` - Adding or updating tests
+- `chore` - Build process, dependencies, tooling
+
+### Examples
+
+```bash
+feat: add grid snapping for annotations
+
+fix: keep canvas stable when switching between views
+
+docs: improve README setup section with Node version requirements
+
+refactor: extract CSV parsing logic to utils folder
+```
+
+## Pull Requests
+
+### Before Submitting
+
+- [ ] `npm run build` passes without errors
+- [ ] `npm run lint` passes without errors
+- [ ] No unrelated file changes (check `git diff`)
+- [ ] UI changes validated in both Canvas and CSV views
+- [ ] Test with multiple images and edge cases
+
+### PR Description Template
+
+Include the following information in your PR:
+
+```markdown
+## What Changed
+Brief description of the changes made.
+
+## Why
+Explanation of the problem this solves or the feature this adds.
+
+## Screenshots/Videos
+For UI changes, include screenshots or a short video showing the before/after.
+
+## CSV Schema Impact
+Does this change affect the CSV import/export format? If yes, explain.
+
+## Testing Checklist
+- [ ] Tested with single image
+- [ ] Tested with multiple images
+- [ ] Tested CSV export
+- [ ] Tested CSV import
+- [ ] Tested on different screen sizes (if UI change)
+```
+
+### Review Process
+
+1. Maintainers will review your PR for code quality and functionality
+2. Address any requested changes
+3. Once approved, your PR will be merged into `main`
+
+## Reporting Issues
+
+When opening issues, please include:
+
+### For Bugs
+
+1. **Steps to reproduce** - Detailed steps to trigger the bug
+2. **Expected behavior** - What should happen
+3. **Actual behavior** - What actually happens
+4. **Environment** - Browser, OS, and screen size
+5. **Sample data** - CSV file or images if relevant (ensure no sensitive data)
+
+### For Feature Requests
+
+1. **Use case** - Why is this feature needed?
+2. **Proposed solution** - How should it work?
+3. **Alternatives considered** - Other approaches you've thought about
+4. **Additional context** - Screenshots, mockups, or examples
+
+## Testing Guidelines
+
+Currently, labelWise does not have a formal test suite. When contributing:
+
+### Manual Testing
+
+- Test all annotation operations (create, move, resize, delete)
+- Test multi-selection with `Ctrl/Cmd + click`
+- Test copy/paste functionality (`Ctrl/Cmd + C/V`)
+- Test CSV export and import with your changes
+- Test zoom and pan interactions
+- Test with images of various sizes and aspect ratios
+
+### Edge Cases
+
+- Empty state (no images loaded)
+- Single image workflow
+- Large number of annotations (100+)
+- Very small or very large images
+- CSV with missing or invalid data
+- Browser compatibility (Chrome, Firefox, Safari)
+
+## Security
+
+If you discover a security vulnerability:
+
+- **Do not open a public issue**
+- Contact the repository maintainers privately
+- Provide detailed information about the vulnerability
+- Allow time for a fix before public disclosure
+
+## Code of Conduct
+
+- Be respectful and constructive in discussions
+- Focus on the code and ideas, not the person
+- Welcome newcomers and help them get started
+- Assume good intentions
+
+## Getting Help
+
+If you need help with your contribution:
+
+- Check existing issues and PRs for similar work
+- Review the [Architecture](/development/architecture) documentation
+- Ask questions in PR comments or open a discussion
+- Refer to the [Local Setup](/development/local-setup) guide for environment issues
+
+## Recognition
+
+All contributors will be recognized in the project. Thank you for helping make labelWise better!

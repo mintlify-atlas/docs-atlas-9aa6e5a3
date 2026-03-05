@@ -1,97 +1,245 @@
 ---
-title: "Introduction"
-description: "Welcome to the new home for your documentation"
+title: "labelWise Documentation"
+mode: "custom"
 ---
 
-## Setting up
+<div className="relative py-20 overflow-hidden bg-gradient-to-br from-[#3B82F6] via-[#2563EB] to-[#1E40AF] dark:from-[#1E3A8A] dark:via-[#1E40AF] dark:to-[#1E3A8A]">
+  <div className="max-w-6xl mx-auto px-6">
+    <div className="flex flex-col lg:flex-row lg:items-center lg:gap-12">
+      <div className="flex-1 space-y-6">
+        <h1 className="text-5xl lg:text-6xl font-bold text-white leading-tight">
+          Annotate images with precision
+        </h1>
+        <p className="text-xl text-blue-100 max-w-2xl">
+          labelWise is an open-source web application for annotating images with bounding boxes and managing your datasets in CSV format. Build high-quality training data for machine learning models.
+        </p>
+        <div className="flex flex-wrap gap-4">
+          <a
+            href="/quickstart"
+            className="inline-flex items-center px-6 py-3 rounded-lg bg-white text-[#3B82F6] font-semibold hover:bg-blue-50 transition-colors no-underline"
+          >
+            Get Started
+          </a>
+          <a
+            href="/introduction"
+            className="inline-flex items-center px-6 py-3 rounded-lg border border-white/30 bg-white/10 text-white font-semibold hover:bg-white/20 transition-colors backdrop-blur-sm no-underline"
+          >
+            Learn More
+          </a>
+        </div>
+      </div>
+      <div className="hidden lg:block flex-1">
+        <div className="rounded-2xl border border-white/20 bg-white/10 backdrop-blur-sm p-1 shadow-2xl">
+          <div className="rounded-xl bg-[#0f1117] p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 rounded-full bg-red-500"></div>
+              <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+              <div className="w-3 h-3 rounded-full bg-green-500"></div>
+            </div>
+            <div className="space-y-1 text-xs font-mono text-gray-300">
+              <div className="flex items-center gap-2">
+                <span className="text-[#60A5FA]">label_name</span>
+                <span className="text-gray-500">,</span>
+                <span className="text-[#60A5FA]">bbox_x</span>
+                <span className="text-gray-500">,</span>
+                <span className="text-[#60A5FA]">bbox_y</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">"car"</span>
+                <span className="text-gray-500">,</span>
+                <span className="text-purple-400">2660</span>
+                <span className="text-gray-500">,</span>
+                <span className="text-purple-400">2640</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-green-400">"person"</span>
+                <span className="text-gray-500">,</span>
+                <span className="text-purple-400">2660</span>
+                <span className="text-gray-500">,</span>
+                <span className="text-purple-400">2904</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-Get your documentation site up and running in minutes.
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Quick Start
+    </h2>
+    <p className="text-lg text-gray-600 dark:text-gray-400">
+      Get up and running with labelWise in three simple steps
+    </p>
+  </div>
 
-<Card
-  title="Start here"
-  icon="rocket"
-  href="/quickstart"
-  horizontal
->
-  Follow our three step quickstart guide.
-</Card>
+  <Steps>
+    <Step title="Clone and install dependencies">
+      Clone the repository and install all required packages:
 
-## Make it yours
+      <CodeGroup>
+      ```bash npm
+      git clone https://github.com/jusolo/labelWise.git
+      cd labelWise
+      npm install
+      ```
 
-Design a docs site that looks great and empowers your users.
+      ```bash pnpm
+      git clone https://github.com/jusolo/labelWise.git
+      cd labelWise
+      pnpm install
+      ```
 
-<Columns cols={2}>
-  <Card
-    title="Edit locally"
-    icon="pen-to-square"
-    href="/development"
-  >
-    Edit your docs locally and preview them in real time.
-  </Card>
-  <Card
-    title="Customize your site"
-    icon="palette"
-    href="/essentials/settings"
-  >
-    Customize the design and colors of your site to match your brand.
-  </Card>
+      ```bash yarn
+      git clone https://github.com/jusolo/labelWise.git
+      cd labelWise
+      yarn install
+      ```
+      </CodeGroup>
+    </Step>
+
+    <Step title="Start the development server">
+      Launch the application in development mode:
+
+      ```bash
+      npm run dev
+      ```
+
+      The application will be available at [http://localhost:5173](http://localhost:5173)
+    </Step>
+
+    <Step title="Upload images and start annotating">
+      Click **Cargar imágenes** to upload your images, create labels, and start drawing bounding boxes on your canvas. Export your annotations as CSV when ready.
+
+      <Tip>
+        Use keyboard shortcuts like `Ctrl/Cmd + C` to copy annotations and `Ctrl/Cmd + V` to paste them across images.
+      </Tip>
+    </Step>
+  </Steps>
+</div>
+
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Core Features
+    </h2>
+    <p className="text-lg text-gray-600 dark:text-gray-400">
+      Everything you need to annotate images efficiently
+    </p>
+  </div>
+
+  <CardGroup cols={2}>
     <Card
-    title="Set up navigation"
-    icon="map"
-    href="/essentials/navigation"
-  >
-    Organize your docs to help users find what they need and succeed with your product.
-  </Card>
-  <Card
-    title="API documentation"
-    icon="terminal"
-    href="/api-reference/introduction"
-  >
-    Auto-generate API documentation from OpenAPI specifications.
-  </Card>
-</Columns>
+      title="Image Management"
+      icon="images"
+      href="/features/image-management"
+    >
+      Upload multiple images, browse your dataset, and manage annotations across all your files.
+    </Card>
+    <Card
+      title="Canvas Annotations"
+      icon="pen-field"
+      href="/features/annotations"
+    >
+      Draw, move, resize, and copy bounding boxes with precision using an intuitive canvas interface.
+    </Card>
+    <Card
+      title="Canvas Controls"
+      icon="maximize"
+      href="/features/canvas-controls"
+    >
+      Zoom, pan, and use grid guides for pixel-perfect annotation placement on large images.
+    </Card>
+    <Card
+      title="CSV Operations"
+      icon="table"
+      href="/features/csv-operations"
+    >
+      Import existing annotations from CSV, edit data in table view, and export your complete dataset.
+    </Card>
+  </CardGroup>
+</div>
 
-## Create beautiful pages
+<div className="mt-16 mb-16 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-12">
+    <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Explore the Documentation
+    </h2>
+    <p className="text-lg text-gray-600 dark:text-gray-400">
+      Learn how to make the most of labelWise
+    </p>
+  </div>
 
-Everything you need to create world-class documentation.
+  <CardGroup cols={3}>
+    <Card
+      title="Keyboard Shortcuts"
+      icon="keyboard"
+      href="/guides/keyboard-shortcuts"
+    >
+      Learn all the keyboard shortcuts for faster annotation workflows.
+    </Card>
+    <Card
+      title="CSV Format"
+      icon="file-csv"
+      href="/guides/csv-format"
+    >
+      Understand the CSV schema for importing and exporting annotations.
+    </Card>
+    <Card
+      title="Workflow Tips"
+      icon="lightbulb"
+      href="/guides/workflow-tips"
+    >
+      Best practices for efficient annotation and dataset management.
+    </Card>
+    <Card
+      title="Architecture"
+      icon="sitemap"
+      href="/development/architecture"
+    >
+      Understand how labelWise is built with React 19 and TypeScript.
+    </Card>
+    <Card
+      title="API Reference"
+      icon="code"
+      href="/api/types/annotation-box"
+    >
+      Explore types and utilities for building on top of labelWise.
+    </Card>
+    <Card
+      title="Contributing"
+      icon="code-pull-request"
+      href="/development/contributing"
+    >
+      Join the community and contribute to labelWise development.
+    </Card>
+  </CardGroup>
+</div>
 
-<Columns cols={2}>
-  <Card
-    title="Write with MDX"
-    icon="pen-fancy"
-    href="/essentials/markdown"
-  >
-    Use MDX to style your docs pages.
-  </Card>
-  <Card
-    title="Code samples"
-    icon="code"
-    href="/essentials/code"
-  >
-    Add sample code to demonstrate how to use your product.
-  </Card>
-  <Card
-    title="Images"
-    icon="image"
-    href="/essentials/images"
-  >
-    Display images and other media.
-  </Card>
-  <Card
-    title="Reusable snippets"
-    icon="recycle"
-    href="/essentials/reusable-snippets"
-  >
-    Write once and reuse across your docs.
-  </Card>
-</Columns>
-
-## Need inspiration?
-
-<Card
-  title="See complete examples"
-  icon="stars"
-  href="https://mintlify.com/customers"
->
-  Browse our showcase of exceptional documentation sites.
-</Card>
+<div className="mt-20 mb-16 max-w-5xl mx-auto px-6">
+  <div className="rounded-2xl border border-gray-200 dark:border-[#27272a] bg-gradient-to-br from-blue-50 to-white dark:from-[#1a1d27] dark:to-[#0f1117] p-8 lg:p-12 text-center">
+    <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+      Ready to start annotating?
+    </h2>
+    <p className="text-lg text-gray-600 dark:text-gray-400 mb-8 max-w-2xl mx-auto">
+      labelWise is open source and ready to use. Deploy locally or fork the project to customize it for your needs.
+    </p>
+    <div className="flex flex-wrap justify-center gap-4">
+      <a
+        href="/quickstart"
+        className="inline-flex items-center px-6 py-3 rounded-lg bg-[#3B82F6] text-white font-semibold hover:bg-[#2563EB] transition-colors no-underline"
+      >
+        Get Started
+      </a>
+      <a
+        href="https://github.com/jusolo/labelWise"
+        className="inline-flex items-center px-6 py-3 rounded-lg border border-gray-300 dark:border-[#27272a] bg-white dark:bg-[#1a1d27] text-gray-900 dark:text-white font-semibold hover:bg-gray-50 dark:hover:bg-[#242838] transition-colors no-underline"
+      >
+        View on GitHub
+      </a>
+    </div>
+  </div>
+</div>

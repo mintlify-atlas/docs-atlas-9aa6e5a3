@@ -1,0 +1,89 @@
+---
+title: 'buildRandomLabelColor'
+description: 'Generate random color schemes for label visualization'
+---
+
+## Function Signature
+
+```typescript
+export const buildRandomLabelColor = (): LabelColor
+```
+
+## Parameters
+
+This function takes no parameters.
+
+## Returns
+
+<ResponseField name="LabelColor" type="object">
+  An object containing color values for different label visualization contexts
+  
+  <Expandable title="properties">
+    <ResponseField name="solid" type="string">
+      A solid HSL color value for primary label display (e.g., `hsl(180 70% 40%)`)
+    </ResponseField>
+    
+    <ResponseField name="soft" type="string">
+      A light background color for subtle label highlighting (e.g., `hsl(180 95% 96%)`)
+    </ResponseField>
+    
+    <ResponseField name="overlay" type="string">
+      A semi-transparent color for overlay effects with 14% opacity (e.g., `hsl(180 85% 45% / 0.14)`)
+    </ResponseField>
+    
+    <ResponseField name="overlayStrong" type="string">
+      A semi-transparent color for stronger overlay effects with 24% opacity (e.g., `hsl(180 85% 45% / 0.24)`)
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Description
+
+The `buildRandomLabelColor` function generates a cohesive color scheme for label visualization by creating four related color variants based on a random hue. All colors share the same hue (0-360 degrees) but vary in saturation, lightness, and opacity to provide different visual weights for different UI contexts.
+
+The function uses HSL (Hue, Saturation, Lightness) color space to ensure:
+- **Visual consistency**: All four colors are harmonious since they share the same hue
+- **Accessibility**: The solid color has sufficient contrast for text
+- **Flexibility**: Different variants for backgrounds, overlays, and primary display
+
+## Example Usage
+
+```typescript
+import { buildRandomLabelColor } from '@/features/labelwise/utils/color'
+
+// Generate a random label color scheme
+const labelColor = buildRandomLabelColor()
+
+console.log(labelColor)
+// Example output:
+// {
+//   solid: 'hsl(240 70% 40%)',           // Deep blue for label text/border
+//   soft: 'hsl(240 95% 96%)',            // Very light blue for backgrounds
+//   overlay: 'hsl(240 85% 45% / 0.14)',  // Subtle blue overlay
+//   overlayStrong: 'hsl(240 85% 45% / 0.24)' // Stronger blue overlay
+// }
+
+// Apply colors to a label element
+const labelElement = document.createElement('div')
+labelElement.style.color = labelColor.solid
+labelElement.style.backgroundColor = labelColor.soft
+labelElement.style.border = `1px solid ${labelColor.solid}`
+
+// Use overlay for hover effects
+labelElement.addEventListener('mouseenter', () => {
+  labelElement.style.backgroundColor = labelColor.overlayStrong
+})
+```
+
+## Color Properties
+
+| Property | Saturation | Lightness | Opacity | Use Case |
+|----------|------------|-----------|---------|----------|
+| `solid` | 70% | 40% | 100% | Primary label color, text, borders |
+| `soft` | 95% | 96% | 100% | Background fills, subtle highlights |
+| `overlay` | 85% | 45% | 14% | Light hover states, secondary backgrounds |
+| `overlayStrong` | 85% | 45% | 24% | Stronger hover states, active selections |
+
+## Implementation Details
+
+The function generates a random hue value between 0 and 360 degrees using `Math.random()`, then constructs four HSL color strings with predefined saturation, lightness, and opacity values optimized for label visualization in UI contexts.

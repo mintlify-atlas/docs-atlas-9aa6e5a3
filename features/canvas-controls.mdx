@@ -1,0 +1,202 @@
+---
+title: Canvas Controls
+description: Master the canvas controls for navigating and working with images in labelWise
+---
+
+## Overview
+
+The canvas controls allow you to navigate large images, adjust zoom levels, and toggle helpful visual guides. These controls are essential for precise annotation work, especially with high-resolution images.
+
+## Interaction Modes
+
+labelWise has two distinct interaction modes for the canvas:
+
+### Draw Mode
+
+**Button**: **Dibujar**
+
+- Default mode for creating annotations
+- Cursor appears as a crosshair
+- Click and drag to draw new bounding boxes
+- Click on existing boxes to select, move, or resize them
+- Best for: Creating and editing annotations
+
+### Pan Mode
+
+**Button**: **Mover**
+
+- Used for navigating around large images
+- Cursor appears as a grab hand (open hand when idle, closed hand when dragging)
+- Click and drag anywhere on the canvas to pan the view
+- Cannot create or modify annotations in this mode
+- Best for: Exploring high-resolution images without accidentally creating boxes
+
+<Tip>
+  Switch to Pan mode when working with large images to avoid accidentally creating annotations while navigating.
+</Tip>
+
+### Switching Between Modes
+
+1. Locate the mode buttons at the top of the canvas panel
+2. Click **Dibujar** for draw mode or **Mover** for pan mode
+3. The active mode button is highlighted
+4. The cursor changes immediately to reflect the current mode
+
+<Note>
+  Any drawing in progress is cancelled when you switch modes. Pan operations are also cancelled when switching away from pan mode.
+</Note>
+
+## Zoom Controls
+
+labelWise provides precise zoom controls to help you work with images at different scales.
+
+### Zoom In
+
+**Button**: **+**
+
+- Increases zoom by 10% (0.1) per click
+- Maximum zoom level: 300%
+- Useful for precise annotation of small objects
+
+### Zoom Out
+
+**Button**: **-**
+
+- Decreases zoom by 10% (0.1) per click
+- Minimum zoom level: 50%
+- Useful for seeing the full context of large images
+
+### Current Zoom Level
+
+- Displayed as a badge between the zoom buttons (e.g., "100%")
+- Shows the current zoom percentage
+- Updates instantly when zooming
+
+### Reset Zoom
+
+**Button**: **Reset**
+
+- Immediately returns zoom to 100%
+- Recenters the image in the viewport
+- Useful for returning to the default view quickly
+
+<Tip>
+  Use zoom to work at the appropriate level of detail. Zoom in for small objects and zoom out to see the overall composition.
+</Tip>
+
+## Grid Guide Overlay
+
+**Button**: **Guía**
+
+The grid guide is a visual overlay that helps with precise alignment and measurement.
+
+### Grid Features
+
+- Semi-transparent blue grid lines
+- Grid size: 50 pixels (defined by `GRID_SIZE` constant)
+- Lines use `rgba(87,148,242,0.18)` for subtle visibility
+- Does not interfere with mouse interactions (pointer-events disabled)
+
+### Toggling the Grid
+
+1. Click the **Guía** button in the canvas controls
+2. The button shows a secondary background when the grid is active
+3. The grid appears or disappears immediately
+4. Your preference is maintained while you work on the current image
+
+<Note>
+  The grid is reset to visible by default when you switch to a different image.
+</Note>
+
+### When to Use the Grid
+
+- **Alignment**: Ensure bounding boxes are properly aligned
+- **Consistency**: Maintain consistent spacing between annotations
+- **Measurement**: Estimate distances and sizes visually
+- **Precision**: Place boxes at exact pixel locations
+
+<Tip>
+  Toggle the grid off when it becomes visually distracting or when taking screenshots of annotated images.
+</Tip>
+
+## Canvas Navigation
+
+When zoomed in beyond 100%, you can navigate around the image using pan controls.
+
+### Pan Behavior
+
+- Switch to **Mover** (Pan) mode
+- Click and drag anywhere on the canvas to pan
+- The image moves in the direction you drag
+- Pan is limited by the viewport boundaries
+- Cannot pan beyond the edge of the zoomed image
+
+### Pan Constraints
+
+- **Horizontal limit**: Calculated as `(stageWidth - viewportSize.width) / 2`
+- **Vertical limit**: Calculated as `(stageHeight - viewportSize.height) / 2`
+- Pan position is automatically clamped when zoom level changes
+- Pan is reset to center when switching images
+
+<Note>
+  At 100% zoom or less, panning may have no effect if the entire image fits within the viewport.
+</Note>
+
+## Working with Large Images
+
+For high-resolution images that require detailed annotation:
+
+### Recommended Workflow
+
+1. **Initial overview**: Start at 100% zoom to see the full image
+2. **Identify regions**: Note areas that need detailed annotation
+3. **Zoom in**: Increase zoom to 150-200% for precision work
+4. **Switch to pan mode**: Change to **Mover** to avoid accidental annotations
+5. **Navigate**: Pan to different regions of interest
+6. **Switch to draw mode**: Return to **Dibujar** to create annotations
+7. **Annotate**: Draw precise bounding boxes at higher zoom
+8. **Verify**: Zoom out to confirm annotations look correct in context
+
+<Tip>
+  Use a systematic approach: divide large images into quadrants and annotate each section thoroughly before moving to the next.
+</Tip>
+
+### Performance Considerations
+
+- The canvas uses fit-to-viewport scaling for optimal display
+- Image dimensions are measured when images load
+- The stage (canvas area) automatically adjusts to viewport size changes
+- ResizeObserver ensures the canvas adapts to browser window resizing
+
+## Canvas State Management
+
+When you switch to a different image, the canvas automatically:
+
+- Resets zoom to 100%
+- Recenters the pan position (x: 0, y: 0)
+- Cancels any drawing in progress
+- Clears annotation selections
+- Resets paste count for copy-paste operations
+- Shows the grid guide (if you toggled it off, it will be on again)
+
+<Note>
+  Canvas state is specific to each image. Switching back to a previous image will not restore your zoom and pan settings.
+</Note>
+
+## Keyboard and Mouse Interactions
+
+While the canvas doesn't have dedicated keyboard shortcuts for navigation, you can:
+
+- **Click and drag**: Draw boxes (in draw mode) or pan (in pan mode)
+- **Click on annotations**: Select, move, or resize boxes
+- **Ctrl/Cmd+Click**: Multi-select annotations
+- **Mouse position**: Automatically converted to image coordinates for precise placement
+
+## Best Practices
+
+1. **Start with the right mode**: Use draw mode for annotation, pan mode for navigation
+2. **Zoom strategically**: Match zoom level to object size (higher zoom for smaller objects)
+3. **Use the grid**: Enable the grid when precision is critical
+4. **Pan efficiently**: Switch to pan mode before navigating to avoid accidental annotations
+5. **Reset when lost**: Use the Reset button to quickly return to the default view
+6. **Verify at multiple zoom levels**: Check annotations both zoomed in and zoomed out
