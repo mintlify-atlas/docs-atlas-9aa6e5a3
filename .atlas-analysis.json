@@ -1,0 +1,95 @@
+{
+  "projectType": "saas",
+  "projectName": "labelWise",
+  "projectDescription": "An open-source web application for annotating images with bounding boxes and managing annotations in CSV format",
+  "theme": "palm",
+  "primaryColor": "#3B82F6",
+  "lightColor": "#60A5FA",
+  "darkColor": "#2563EB",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Core Features",
+            "pages": [
+              "features/image-management",
+              "features/annotations",
+              "features/canvas-controls",
+              "features/csv-operations"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/keyboard-shortcuts",
+              "guides/csv-format",
+              "guides/workflow-tips",
+              "guides/troubleshooting"
+            ]
+          },
+          {
+            "group": "Development",
+            "pages": [
+              "development/architecture",
+              "development/contributing",
+              "development/local-setup"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Types",
+            "pages": [
+              "api/types/annotation-box",
+              "api/types/image-item",
+              "api/types/csv-row"
+            ]
+          },
+          {
+            "group": "Utilities",
+            "pages": [
+              "api/utilities/csv-parser",
+              "api/utilities/color-generator"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "Multi-image upload and management",
+    "Interactive canvas-based bounding box annotation",
+    "Move, resize, copy/paste annotations with multi-select",
+    "Grid guide overlay for precise alignment",
+    "CSV import/export with schema validation",
+    "Direct CSV table editing",
+    "Zoom and pan controls for large images",
+    "Toast notifications for user feedback"
+  ],
+  "publicApiSurface": [
+    "AnnotationBox type",
+    "ImageItem type",
+    "CsvRow type",
+    "Point type",
+    "ResizeHandle type",
+    "AnnotationTransform type",
+    "LabelColor type",
+    "parseCsv utility",
+    "buildRandomLabelColor utility",
+    "MIN_BOX_SIZE constant",
+    "GRID_SIZE constant"
+  ]
+}
